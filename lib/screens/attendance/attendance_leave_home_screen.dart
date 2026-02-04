@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hrms/screens/leave/my_leaves_screen.dart';
 import 'package:hrms/widgets/soft_ui.dart';
 import 'mark_attendance_screen.dart';
 import 'attendance_history_screen.dart';
@@ -171,7 +172,7 @@ class _AttendanceLeaveHomeScreenState extends State<AttendanceLeaveHomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const LeaveStatusScreen(),
+                            builder: (context) => MyLeavesScreen(),
                           ),
                         );
                       },

@@ -50,7 +50,53 @@ Uri.parse("$baseUrl/admin/pending-employees"),
         "Authorization": "Bearer $token",
       },
     );
+    
 
     return response.statusCode == 200;
   }
+  // 🔹 Get pending leaves (HR)
+static Future<List<dynamic>> getPendingLeaves() async {
+  final token = await TokenHelper.getToken();
+
+  final response = await http.get(
+    Uri.parse("$baseUrl/leaves/pending"),
+    headers: {
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+    return data['leaves'];
+  } else {
+    return [];
+  }
+}
+// 🔹 Approve leave
+static Future<bool> approveLeave(String leaveId) async {
+  final token = await TokenHelper.getToken();
+
+  final response = await http.put(
+    Uri.parse("$baseUrl/leaves/approve/$leaveId"),
+    headers: {
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  return response.statusCode == 200;
+}
+// 🔹 Reject leave
+static Future<bool> rejectLeave(String leaveId) async {
+  final token = await TokenHelper.getToken();
+
+  final response = await http.put(
+    Uri.parse("$baseUrl/leaves/reject/$leaveId"),
+    headers: {
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  return response.statusCode == 200;
+}
+
 }

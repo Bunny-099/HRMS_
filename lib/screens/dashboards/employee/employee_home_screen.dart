@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hrms/screens/attendance/mark_attendance_screen.dart';
 import 'package:hrms/screens/leave/leave_status_screen.dart';
+import 'package:hrms/screens/leave/my_leaves_screen.dart';
 import 'package:hrms/screens/payroll/monthly_payslip_screen.dart';
 import 'package:hrms/screens/employee/employee_profile_screen.dart';
-import 'package:hrms/screens/self_service/my_leaves_screen.dart';
+import 'package:hrms/screens/leave/my_leaves_screen.dart';
 import 'package:hrms/screens/self_service/self_service_home_screen.dart';
 import 'package:hrms/widgets/soft_ui.dart';
 import 'package:hrms/services/employee_service.dart';

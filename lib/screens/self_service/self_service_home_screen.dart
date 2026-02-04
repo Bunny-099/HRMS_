@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hrms/screens/leave/my_leaves_screen.dart';
 
 import 'my_profile_screen.dart';
 import 'my_documents_screen.dart';
 import 'my_payslips_screen.dart';
-import 'my_leaves_screen.dart';
 
 class SelfServiceHomeScreen extends StatefulWidget {
   static const String id = 'self_service_home_screen';
@@ -168,7 +168,7 @@ class _SelfServiceHomeScreenState extends State<SelfServiceHomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const MyLeavesScreen(),
+                            builder: (context) => MyLeavesScreen(),
                           ),
                         );
                       },

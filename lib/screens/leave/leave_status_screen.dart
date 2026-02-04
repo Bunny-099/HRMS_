@@ -1,61 +1,37 @@
 import 'package:flutter/material.dart';
-import '../../services/leave_service.dart';
 
-class LeaveStatusScreen extends StatefulWidget {
-  const LeaveStatusScreen({super.key});
+class LeaveStatusCard extends StatelessWidget {
+  final Map leave;
+  const LeaveStatusCard({super.key, required this.leave});
 
-  @override
-  State<LeaveStatusScreen> createState() => _LeaveStatusScreenState();
-}
-
-class _LeaveStatusScreenState extends State<LeaveStatusScreen> {
-  bool isLoading = true;
-  List<dynamic> leaves = [];
-
-  @override
-  void initState() {
-    super.initState();
-    fetchLeaves();
-  }
-
-  Future<void> fetchLeaves() async {
-    final data = await LeaveService.getMyLeaves();
-    setState(() {
-      leaves = data;
-      isLoading = false;
-    });
+  Color getStatusColor(String status) {
+    if (status == 'APPROVED') return Colors.green;
+    if (status == 'REJECTED') return Colors.red;
+    return Colors.orange;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFFACD),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFACD),
-        elevation: 0,
-        title: const Text(
-          'Leave Status',
-          style: TextStyle(color: Color(0xFFFF69B4)),
+    return Card(
+      margin: const EdgeInsets.all(10),
+      child: ListTile(
+        title: Text('${leave['leaveType']} Leave'),
+        subtitle: Text(
+'${leave['fromDate'].split("T")[0]} → ${leave['toDate'].split("T")[0]}',
+
         ),
-        iconTheme: const IconThemeData(color: Color(0xFFFF69B4)),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: getStatusColor(leave['status']),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            leave['status'],
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: leaves.length,
-              itemBuilder: (context, index) {
-                final leave = leaves[index];
-                return ListTile(
-                  title: Text(leave['leaveType']),
-                  subtitle: Text(leave['reason'] ?? ''),
-                  trailing: Text(
-                    leave['status'],
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                );
-              },
-            ),
     );
   }
 }

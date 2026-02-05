@@ -1,243 +1,85 @@
-import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/material.dart';
-import 'package:hrms/widgets/soft_ui.dart';
-import 'package:hrms/theme/soft_theme.dart' as custom_theme;
+import 'package:hrms/models/payslip_model.dart';
 import 'package:hrms/services/api_services.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:hrms/widgets/soft_ui.dart';
+import 'package:hrms/theme/soft_theme.dart';
 
 class PayslipPdfDownloadScreen extends StatefulWidget {
-  
   static const String id = 'payslip_pdf_download_screen';
-  
-  const PayslipPdfDownloadScreen({super.key});
+
+  final Payslip payslip;
+
+  const PayslipPdfDownloadScreen({
+    super.key,
+    required this.payslip,
+  });
 
   @override
-  State<PayslipPdfDownloadScreen> createState() => _PayslipPdfDownloadScreenState();
+  State<PayslipPdfDownloadScreen> createState() =>
+      _PayslipPdfDownloadScreenState();
 }
 
-class _PayslipPdfDownloadScreenState extends State<PayslipPdfDownloadScreen> {
+class _PayslipPdfDownloadScreenState
+    extends State<PayslipPdfDownloadScreen> {
   final ApiService _api = ApiService();
-bool _loading = false;
 
-  // Sample months data
-  List<MonthYear> months = [
-    MonthYear(month: 'December', year: '2023', status: 'Available'),
-    MonthYear(month: 'November', year: '2023', status: 'Available'),
-    MonthYear(month: 'October', year: '2023', status: 'Available'),
-    MonthYear(month: 'September', year: '2023', status: 'Available'),
-    MonthYear(month: 'August', year: '2023', status: 'Available'),
-    MonthYear(month: 'July', year: '2023', status: 'Available'),
-    MonthYear(month: 'June', year: '2023', status: 'Available'),
-    MonthYear(month: 'May', year: '2023', status: 'Available'),
-    MonthYear(month: 'April', year: '2023', status: 'Available'),
-    MonthYear(month: 'March', year: '2023', status: 'Available'),
-    MonthYear(month: 'February', year: '2023', status: 'Available'),
-    MonthYear(month: 'January', year: '2023', status: 'Available'),
-  ];
-int _monthToNumber(String month) {
-  const months = {
-    'January': 1,
-    'February': 2,
-    'March': 3,
-    'April': 4,
-    'May': 5,
-    'June': 6,
-    'July': 7,
-    'August': 8,
-    'September': 9,
-    'October': 10,
-    'November': 11,
-    'December': 12,
-  };
-  return months[month] ?? 1;
-}
-Future<void> _downloadPayslip(String month, String year) async {
-  try {
-    setState(() => _loading = true);
+  bool _downloading = false;
+  String? _error;
 
-    final monthNumber = _monthToNumber(month);
+  // ================= DOWNLOAD LOGIC =================
 
-    // 1️⃣ Generate payslip
-    final generateRes = await _api.get(
-      '/payslips/generate?month=$monthNumber&year=$year',
-    );
+  Future<void> _downloadPayslipPdf() async {
+    try {
+      setState(() {
+        _downloading = true;
+        _error = null;
+      });
 
-    if (generateRes.statusCode != 200 &&
-        generateRes.statusCode != 201) {
-      throw Exception('Failed to generate payslip');
+      final response = await _api.rawGet(
+        '/payslips/${widget.payslip.id}/pdf',
+      );
+
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File(
+        '${dir.path}/payslip_${widget.payslip.month}_${widget.payslip.year}.pdf',
+      );
+
+      await file.writeAsBytes(response.bodyBytes);
+      await OpenFilex.open(file.path);
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to download payslip PDF';
+      });
+    } finally {
+      setState(() {
+        _downloading = false;
+      });
     }
-
-    final generateData = jsonDecode(generateRes.body);
-    final payslipId = generateData['payslipId'];
-
-    // 2️⃣ Get token
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-
-    if (token == null) {
-      throw Exception('User not authenticated');
-    }
-
-    // 3️⃣ Download PDF with AUTH
-    final pdfResponse = await _api.rawGet(
-      '/payslips/$payslipId/pdf',
-    );
-
-    // 4️⃣ Save file
-    final dir = await getApplicationDocumentsDirectory();
-  final safeMonth = month; // already a String
-final safeYear = year;
-
-final file = File(
-  '${dir.path}/payslip_${safeMonth}_$safeYear.pdf',
-);
-
-    await file.writeAsBytes(pdfResponse.bodyBytes);
-
-    // 5️⃣ Open PDF
-    await OpenFilex.open(file.path);
-
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(e.toString()),
-        backgroundColor: Colors.red,
-      ),
-    );
-  } finally {
-    setState(() => _loading = false);
   }
-}
 
-
+  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: custom_theme.SoftTheme.backgroundColor,
+      backgroundColor: SoftTheme.backgroundColor,
       body: SafeArea(
-        child: Container(
+        child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: custom_theme.SoftTheme.cardColor,
-                        shape: BoxShape.circle,
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.white,
-                            offset: Offset(-3, -3),
-                            blurRadius: 5,
-                          ),
-                          BoxShadow(
-                            color: Color(0xFFA3B1C6),
-                            offset: Offset(3, 3),
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    'Download Payslip',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: custom_theme.SoftTheme.textColor,
-                    ),
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: custom_theme.SoftTheme.cardColor,
-                      shape: BoxShape.circle,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.white,
-                          offset: Offset(-3, -3),
-                          blurRadius: 5,
-                        ),
-                        BoxShadow(
-                          color: Color(0xFFA3B1C6),
-                          offset: Offset(3, 3),
-                          blurRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.refresh,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
+              _buildHeader(),
               const SizedBox(height: 30),
-              
-              // Info card
-              SoftCard(
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info,
-                      color: custom_theme.SoftTheme.hintColor,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Download your payslips in PDF format for the past 12 months',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: custom_theme.SoftTheme.hintColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
+              if (_error != null) _buildError(),
+
+              _buildPayslipInfo(),
               const SizedBox(height: 30),
-              
-              // Month selector
-              Text(
-                'Select Month & Year',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: custom_theme.SoftTheme.textColor,
-                ),
-              ),
-              const SizedBox(height: 20),
-              
-              // Months list
-              Expanded(
-                child: ListView.builder(
-                  itemCount: months.length,
-                  itemBuilder: (context, index) {
-                    final month = months[index];
-                    return _buildMonthCard(month);
-                  },
-                ),
-              ),
+
+              _buildDownloadSection(),
             ],
           ),
         ),
@@ -245,113 +87,151 @@ final file = File(
     );
   }
 
-  Widget _buildMonthCard(MonthYear month) {
-    bool isAvailable = month.status == 'Available';
-    
-    return SoftCard(
-      child: Container(
-        padding: const EdgeInsets.all(15),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  month.month,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: custom_theme.SoftTheme.textColor,
-                  ),
-                ),
-                Text(
-                  month.year,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: custom_theme.SoftTheme.hintColor,
-                  ),
-                ),
-              ],
+  // ================= HEADER =================
+
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: SoftCard(
+            child: const SizedBox(
+              width: 40,
+              height: 40,
+              child: Icon(Icons.arrow_back),
             ),
-            if (isAvailable)
-              Container(
-                decoration: BoxDecoration(
-                  color: custom_theme.SoftTheme.primaryColor,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.white,
-                      offset: Offset(-3, -3),
-                      blurRadius: 5,
-                    ),
-                    BoxShadow(
-                      color: Color(0xFFA3B1C6),
-                      offset: Offset(3, 3),
-                      blurRadius: 5,
-                    ),
-                  ],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => _downloadPayslip(month.month, month.year),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.download,
-                            size: 16,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            'Download',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            else
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Not Available',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          ),
+        ),
+        Text(
+          'Payslip PDF',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: SoftTheme.textColor,
+          ),
+        ),
+        const SizedBox(width: 40),
+      ],
+    );
+  }
+
+  // ================= ERROR =================
+
+  Widget _buildError() {
+    return SoftCard(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            const Icon(Icons.error, color: Colors.red),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                _error!,
+                style: const TextStyle(color: Colors.red),
               ),
+            ),
           ],
         ),
       ),
     );
   }
-}
 
-class MonthYear {
-  final String month;
-  final String year;
-  final String status; // 'Available' or 'Not Available'
+  // ================= PAYSLIP INFO =================
 
-  MonthYear({
-    required this.month,
-    required this.year,
-    required this.status,
-  });
+  Widget _buildPayslipInfo() {
+    final p = widget.payslip;
+
+    return SoftCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _infoRow('Employee', p.employeeName),
+          _infoRow('Employee ID', p.employeeId),
+          const Divider(),
+          _infoRow('Month', '${p.month} ${p.year}'),
+          _infoRow(
+            'Net Salary',
+            '₹${p.netSalary.toStringAsFixed(0)}',
+            isBold: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoRow(String label, String value, {bool isBold = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: SoftTheme.hintColor,
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+              color: SoftTheme.textColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ================= DOWNLOAD =================
+
+  Widget _buildDownloadSection() {
+    return SoftCard(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.picture_as_pdf,
+              size: 40,
+              color: Colors.red,
+            ),
+            const SizedBox(height: 15),
+            Text(
+              'Download Payslip PDF',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: SoftTheme.textColor,
+              ),
+            ),
+            const SizedBox(height: 15),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _downloading ? null : _downloadPayslipPdf,
+                icon: _downloading
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.download),
+                label: Text(
+                  _downloading ? 'Downloading...' : 'Download PDF',
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

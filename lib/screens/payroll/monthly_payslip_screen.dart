@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'package:hrms/models/payslip_model.dart';
 import 'package:hrms/services/api_services.dart';
 
-
 class MonthlyPayslipScreen extends StatefulWidget {
   static const String id = 'monthly_payslip_screen';
 
@@ -14,61 +13,63 @@ class MonthlyPayslipScreen extends StatefulWidget {
 
   @override
   State<MonthlyPayslipScreen> createState() => _MonthlyPayslipScreenState();
-  
 }
 
 class _MonthlyPayslipScreenState extends State<MonthlyPayslipScreen> {
-  @override
-void initState() {
-  super.initState();
-  _fetchPayslip();
-}
-Future<void> _fetchPayslip() async {
-  try {
-    final response = await _api.get(
-      '/payslips/me?month=12&year=2023',
-    );
+  int selectedMonth = DateTime.now().month;
+  int selectedYear = DateTime.now().year;
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+  @override
+  void initState() {
+    super.initState();
+    _fetchPayslip();
+  }
+
+  Future<void> _fetchPayslip() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    try {
+      final response = await _api.get(
+        '/payslips/me?month=$selectedMonth&year=$selectedYear',
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          payslip = Payslip.fromJson(data);
+          _loading = false;
+        });
+      } else {
+        setState(() {
+          _error = 'Payslip not found';
+          _loading = false;
+        });
+      }
+    } catch (e) {
       setState(() {
-        payslip = Payslip.fromJson(data);
-        _loading = false;
-      });
-    } else {
-      setState(() {
-        _error = 'Payslip not found';
+        _error = 'Failed to load payslip';
         _loading = false;
       });
     }
-  } catch (e) {
-    setState(() {
-      _error = 'Failed to load payslip';
-      _loading = false;
-    });
   }
-}
 
-  
-final ApiService _api = ApiService();
-Payslip? payslip;
-bool _loading = true;
-String? _error;
-
+  final ApiService _api = ApiService();
+  Payslip? payslip;
+  bool _loading = true;
+  String? _error;
 
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-  return const Scaffold(
-    body: Center(child: CircularProgressIndicator()),
-  );
-}
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
-if (_error != null) {
-  return Scaffold(
-    body: Center(child: Text(_error!)),
-  );
-}
+    if (_error != null) {
+      return Scaffold(body: Center(child: Text(_error!)));
+    }
 
     return Scaffold(
       backgroundColor: SoftTheme.backgroundColor,
@@ -164,44 +165,64 @@ if (_error != null) {
 
               // Earnings section
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildSectionHeader('Earnings', Colors.green),
+                child: RefreshIndicator(
+                  onRefresh: _fetchPayslip,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
 
-                      const SizedBox(height: 20),
+                    child: Column(
+                      children: [
+                        _buildSectionHeader('Earnings', Colors.green),
 
+                        _buildPayslipRow(
+                          'Basic Salary',
+                          payslip?.basicSalary ?? 0,
+                        ),
+                        _buildPayslipRow('HRA', payslip?.hra ?? 0),
+                        _buildPayslipRow('Allowances', payslip?.allowances ?? 0),
 
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                      // Net salary
-                      SoftCard(
-                        child: Container(
-                          padding: const EdgeInsets.all(15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Net Salary',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: SoftTheme.textColor,
+                        _buildSectionHeader('Deductions', Colors.red),
+
+                        _buildPayslipRow(
+                          'Leave Deduction',
+                          payslip?.leaveDeduction ?? 0
+                        ),
+                        _buildPayslipRow(
+                          'Other Deductions',
+                          payslip?.otherDeductions ?? 0
+                        ),
+
+                        // Net salary
+                        SoftCard(
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Net Salary',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: SoftTheme.textColor,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                '₹${payslip!.netSalary.toStringAsFixed(0)}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: SoftTheme.primaryColor,
+                                Text(
+                                  '₹${payslip?.netSalary ?? 0.toStringAsFixed(0)}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: SoftTheme.primaryColor,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

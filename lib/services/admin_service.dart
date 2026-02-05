@@ -72,12 +72,12 @@ static Future<List<dynamic>> getPendingLeaves() async {
     return [];
   }
 }
-// 🔹 Approve leave
+// ✅ Approve leave
 static Future<bool> approveLeave(String leaveId) async {
   final token = await TokenHelper.getToken();
 
   final response = await http.put(
-    Uri.parse("$baseUrl/leaves/approve/$leaveId"),
+    Uri.parse("$baseUrl/leaves/$leaveId/approve"),
     headers: {
       "Authorization": "Bearer $token",
     },
@@ -85,12 +85,13 @@ static Future<bool> approveLeave(String leaveId) async {
 
   return response.statusCode == 200;
 }
-// 🔹 Reject leave
+
+// ✅ Reject leave
 static Future<bool> rejectLeave(String leaveId) async {
   final token = await TokenHelper.getToken();
 
   final response = await http.put(
-    Uri.parse("$baseUrl/leaves/reject/$leaveId"),
+    Uri.parse("$baseUrl/leaves/$leaveId/reject"),
     headers: {
       "Authorization": "Bearer $token",
     },
@@ -98,5 +99,6 @@ static Future<bool> rejectLeave(String leaveId) async {
 
   return response.statusCode == 200;
 }
+
 
 }

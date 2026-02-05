@@ -50,9 +50,9 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
     await AdminService.approveEmployee(userId);
     _refreshEmployees();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Employee approved')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Employee approved')));
   }
 
   // 🔹 Approve leave
@@ -60,9 +60,9 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
     await AdminService.approveLeave(leaveId);
     _refreshLeaves();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Leave approved')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Leave approved')));
   }
 
   // 🔹 Reject leave
@@ -70,9 +70,9 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
     await AdminService.rejectLeave(leaveId);
     _refreshLeaves();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Leave rejected')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Leave rejected')));
   }
 
   @override
@@ -105,39 +105,60 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
 
   // ================= EMPLOYEE LIST =================
 
-  Widget _buildEmployeeList() {
-    if (pendingEmployees.isEmpty) {
-      return const Center(child: Text('No pending employees'));
-    }
-
+ Widget _buildEmployeeList() {
+  if (pendingEmployees.isEmpty) {
     return RefreshIndicator(
       onRefresh: _refreshEmployees,
-      child: ListView.builder(
-        itemCount: pendingEmployees.length,
-        itemBuilder: (context, index) {
-          final emp = pendingEmployees[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: ListTile(
-              title: Text(emp['name']),
-              subtitle: Text(emp['email']),
-              trailing: ElevatedButton(
-                onPressed: () => _approveEmployee(emp['_id']),
-                child: const Text('Approve'),
-              ),
-            ),
-          );
-        },
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: const [
+          SizedBox(height: 200),
+          Center(child: Text('No pending employees')),
+        ],
       ),
     );
   }
 
+  return RefreshIndicator(
+    onRefresh: _refreshEmployees,
+    child: ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: pendingEmployees.length,
+      itemBuilder: (context, index) {
+        final emp = pendingEmployees[index];
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: ListTile(
+            title: Text(emp['name'] ?? emp['fullName'] ?? 'Employee'),
+            subtitle: Text(emp['email'] ?? '-'),
+            trailing: ElevatedButton(
+              onPressed: () => _approveEmployee(emp['_id']),
+              child: const Text('Approve'),
+            ),
+          ),
+        );
+      },
+    ),
+  );
+}
+
+
   // ================= LEAVE LIST =================
 
   Widget _buildLeaveList() {
-    if (pendingLeaves.isEmpty) {
-      return const Center(child: Text('No pending leaves'));
-    }
+if (pendingLeaves.isEmpty) {
+  return RefreshIndicator(
+    onRefresh: _refreshLeaves,
+    child: ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: const [
+        SizedBox(height: 200),
+        Center(child: Text('No pending leaves')),
+      ],
+    ),
+  );
+}
+
 
     return RefreshIndicator(
       onRefresh: _refreshLeaves,
@@ -153,12 +174,12 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                     ? leave['employee']['fullName'] ?? 'Employee'
                     : 'Employee',
               ),
-subtitle: Text(
-  '${leave['leaveType'] ?? 'Leave'} | '
-  '${leave['fromDate'] != null ? leave['fromDate'].split("T")[0] : '--'} '
-  '→ '
-  '${leave['toDate'] != null ? leave['toDate'].split("T")[0] : '--'}',
-),
+              subtitle: Text(
+                '${leave['leaveType'] ?? 'Leave'} | '
+                '${leave['fromDate'] != null ? leave['fromDate'].split("T")[0] : '--'} '
+                '→ '
+                '${leave['toDate'] != null ? leave['toDate'].split("T")[0] : '--'}',
+              ),
 
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,

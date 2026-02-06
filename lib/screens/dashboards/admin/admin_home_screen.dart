@@ -5,6 +5,8 @@ import 'package:hrms/screens/attendance/holiday_calendar_screen.dart';
 import 'package:hrms/screens/payroll/salary_structure_screen.dart';
 import 'package:hrms/services/admin_service.dart';
 import 'package:hrms/widgets/soft_ui.dart';
+import 'package:hrms/screens/dashboards/admin/admin_set_salary_screen.dart';
+
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -15,20 +17,20 @@ class AdminHomeScreen extends StatefulWidget {
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
   Map<String, dynamic>? stats;
-bool loading = true;
-@override
-void initState() {
-  super.initState();
-  _loadStats();
-}
+  bool loading = true;
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
 
-Future<void> _loadStats() async {
-  final data = await AdminService.getAdminStats();
-  setState(() {
-    stats = data;
-    loading = false;
-  });
-}
+  Future<void> _loadStats() async {
+    final data = await AdminService.getAdminStats();
+    setState(() {
+      stats = data;
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +80,7 @@ Future<void> _loadStats() async {
                       const SizedBox(height: 8),
                       Text(
                         'HR Management Dashboard',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -156,25 +155,37 @@ Future<void> _loadStats() async {
                           case 0:
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const EmployeeListScreen()),
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const EmployeeListScreen(),
+                              ),
                             );
                             break;
                           case 1:
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const HolidayCalendarScreen()),
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const HolidayCalendarScreen(),
+                              ),
                             );
                             break;
                           case 2:
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const AttendanceHistoryScreen()),
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const AttendanceHistoryScreen(),
+                              ),
                             );
                             break;
                           case 3:
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const SalaryStructureScreen()),
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const AdminSetSalaryScreen(),
+                              ),
                             );
                             break;
                         }
@@ -210,25 +221,37 @@ Future<void> _loadStats() async {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildStatCard(
-  title: 'Present Today',
-  value: loading ? '...' : stats!['presentToday'].toString(),
-  icon: Icons.check_circle,
-  color: Colors.green,
-),
+                      title: 'Present Today',
+                      value: loading
+                          ? '...'
+                          : stats!['presentToday'].toString(),
+                      icon: Icons.check_circle,
+                      color: Colors.green,
+                    ),
                     _buildStatCard(
-
                       title: 'Total Employees',
-                      value: loading ? '...' : stats!['totalEmployees'].toString(),
+                      value: loading
+                          ? '...'
+                          : stats!['totalEmployees'].toString(),
                       icon: Icons.people,
                       color: const Color(0xFFFF69B4),
                     ),
                     _buildStatCard(
                       title: 'Pending Requests',
-                      value:  loading ? '...' : stats!['pendingEmployees'].toString(),
+                      value: loading
+                          ? '...'
+                          : stats!['pendingEmployees'].toString(),
                       icon: Icons.check_circle,
                       color: const Color(0xFF4CAF50),
                     ),
-                    _buildStatCard(title: "Active Employees", value: loading ? '...' : stats!['activeEmployees'].toString(), icon: Icons.check_circle, color: Colors.indigo)
+                    _buildStatCard(
+                      title: "Active Employees",
+                      value: loading
+                          ? '...'
+                          : stats!['activeEmployees'].toString(),
+                      icon: Icons.check_circle,
+                      color: Colors.indigo,
+                    ),
                   ],
                 ),
 
@@ -267,17 +290,11 @@ Future<void> _loadStats() async {
   }) {
     return SoftCard(
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 40,
-              color: color,
-            ),
+            Icon(icon, size: 40, color: color),
             const SizedBox(height: 10),
             Text(
               title,
@@ -290,10 +307,7 @@ Future<void> _loadStats() async {
             const SizedBox(height: 5),
             Text(
               subtitle,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Color(0xFFD8BFD8),
-              ),
+              style: const TextStyle(fontSize: 12, color: Color(0xFFD8BFD8)),
             ),
           ],
         ),
@@ -324,11 +338,7 @@ Future<void> _loadStats() async {
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              size: 30,
-              color: color,
-            ),
+            Icon(icon, size: 30, color: color),
             const SizedBox(height: 8),
             Text(
               value,
@@ -341,10 +351,7 @@ Future<void> _loadStats() async {
             const SizedBox(height: 4),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
         ),

@@ -39,7 +39,7 @@ class _PayslipPdfDownloadScreenState
       });
 
       final response = await _api.rawGet(
-        '/payslips/${widget.payslip.id}/pdf',
+        '/payslips/pdf?month=${widget.payslip.month}&year=${widget.payslip.year}',
       );
 
       final dir = await getApplicationDocumentsDirectory();
@@ -148,7 +148,6 @@ class _PayslipPdfDownloadScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _infoRow('Employee', p.employeeName),
-          _infoRow('Employee ID', p.employeeId),
           const Divider(),
           _infoRow('Month', '${p.month} ${p.year}'),
           _infoRow(

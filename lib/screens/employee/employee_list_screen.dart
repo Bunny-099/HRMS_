@@ -54,8 +54,8 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
         filteredEmployees = employees;
       } else {
         filteredEmployees = employees.where((employee) {
-          final name =
-    (employee['fullName'] ?? employee['name'] ?? '').toLowerCase();
+          final name = (employee['fullName'] ?? employee['name'] ?? '')
+              .toLowerCase();
 
           final email = employee['email']?.toLowerCase() ?? '';
 
@@ -214,25 +214,24 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     return SoftCard(
       child: GestureDetector(
         onTap: () {
-Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => EmployeeProfileScreen(
-      userId: employee['_id'],
-      isAdminView: true,
-    ),
-  ),
-);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EmployeeProfileScreen(
+                userId: employee['_id'],
+                isAdminView: true,
+              ),
+            ),
+          );
         },
-child: Container(
-  padding: const EdgeInsets.all(15),
-  decoration: BoxDecoration(
-    color: Colors.white, // ⭐ REQUIRED
-    borderRadius: BorderRadius.circular(16),
-  ),
-  child: Row(
-    children: [
-
+        child: Container(
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: Colors.white, // ⭐ REQUIRED
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
               // Profile avatar
               Container(
                 width: 50,
@@ -262,14 +261,14 @@ child: Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-Text(
-  employee['fullName'] ?? employee['name'] ?? 'No Name',
-  style: const TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.bold,
-    color: Color(0xFFFF69B4),
-  ),
-),
+                    Text(
+                      employee['fullName'] ?? employee['name'] ?? 'No Name',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFFF69B4),
+                      ),
+                    ),
 
                     const SizedBox(height: 5),
                     const Text(
@@ -316,6 +315,5 @@ Text(
         ),
       ),
     );
-  
-   } 
   }
+}

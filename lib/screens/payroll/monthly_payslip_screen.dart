@@ -108,7 +108,8 @@ class _MonthlyPayslipScreenState extends State<MonthlyPayslipScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const PayslipPdfDownloadScreen(),
+                          builder: (_) =>
+                              PayslipPdfDownloadScreen(payslip: payslip!),
                         ),
                       );
                     },
@@ -130,7 +131,7 @@ class _MonthlyPayslipScreenState extends State<MonthlyPayslipScreen> {
                 child: Column(
                   children: [
                     Text(
-                      'Payslip for ${payslip!.month} ${payslip!.year}',
+                      'Payslip for $selectedMonth / $selectedYear',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -143,13 +144,6 @@ class _MonthlyPayslipScreenState extends State<MonthlyPayslipScreen> {
                       children: [
                         Text(
                           'Employee: ${payslip!.employeeName}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: SoftTheme.hintColor,
-                          ),
-                        ),
-                        Text(
-                          'ID: ${payslip!.employeeId}',
                           style: TextStyle(
                             fontSize: 14,
                             color: SoftTheme.hintColor,
@@ -172,26 +166,41 @@ class _MonthlyPayslipScreenState extends State<MonthlyPayslipScreen> {
 
                     child: Column(
                       children: [
+                        _buildSectionHeader('Attendance', Colors.blue),
+
+                        _buildPayslipRow(
+                          'Present Days',
+                          payslip!.attendance.presentDays.toDouble(),
+                        ),
+                        _buildPayslipRow(
+                          'Leave Days',
+                          payslip!.attendance.leaveDays.toDouble(),
+                        ),
+                        _buildPayslipRow(
+                          'LOP Days',
+                          payslip!.attendance.lopDays.toDouble(),
+                        ),
+
+                        const SizedBox(height: 20),
                         _buildSectionHeader('Earnings', Colors.green),
 
                         _buildPayslipRow(
                           'Basic Salary',
-                          payslip?.basicSalary ?? 0,
+                          payslip!.earnings.basic,
                         ),
-                        _buildPayslipRow('HRA', payslip?.hra ?? 0),
-                        _buildPayslipRow('Allowances', payslip?.allowances ?? 0),
+                        _buildPayslipRow('HRA', payslip!.earnings.hra),
+                        _buildPayslipRow(
+                          'Allowances',
+                          payslip!.earnings.allowances,
+                        ),
 
                         const SizedBox(height: 20),
 
                         _buildSectionHeader('Deductions', Colors.red),
 
                         _buildPayslipRow(
-                          'Leave Deduction',
-                          payslip?.leaveDeduction ?? 0
-                        ),
-                        _buildPayslipRow(
-                          'Other Deductions',
-                          payslip?.otherDeductions ?? 0
+                          'LOP Deduction',
+                          payslip!.deductions.lop,
                         ),
 
                         // Net salary
@@ -210,7 +219,7 @@ class _MonthlyPayslipScreenState extends State<MonthlyPayslipScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '₹${payslip?.netSalary ?? 0.toStringAsFixed(0)}',
+                                  '₹${payslip!.netSalary.toStringAsFixed(0)}',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,

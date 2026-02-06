@@ -5,7 +5,14 @@ import 'package:hrms/theme/soft_theme.dart';
 import 'package:hrms/widgets/soft_ui.dart';
 
 class AdminSetSalaryScreen extends StatefulWidget {
-  const AdminSetSalaryScreen({super.key});
+  final String employeeId;
+  final String employeeName;
+
+  const AdminSetSalaryScreen({
+    super.key,
+    required this.employeeId,
+    required this.employeeName,
+  });
 
   @override
   State<AdminSetSalaryScreen> createState() => _AdminSetSalaryScreenState();
@@ -13,14 +20,12 @@ class AdminSetSalaryScreen extends StatefulWidget {
 
 class _AdminSetSalaryScreenState extends State<AdminSetSalaryScreen> {
   final ApiService _api = ApiService();
-
-  final TextEditingController _employeeIdCtrl = TextEditingController();
   final TextEditingController _salaryCtrl = TextEditingController();
 
   bool _loading = false;
 
   Future<void> _setSalary() async {
-    if (_employeeIdCtrl.text.isEmpty || _salaryCtrl.text.isEmpty) {
+    if (_salaryCtrl.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('All fields are required')));
@@ -31,7 +36,7 @@ class _AdminSetSalaryScreenState extends State<AdminSetSalaryScreen> {
       setState(() => _loading = true);
 
       final response = await _api.post('/salary/set', {
-        'employeeId': _employeeIdCtrl.text.trim(),
+        'employeeId': widget.employeeId, // 🔥 CORRECT
         'monthlySalary': int.parse(_salaryCtrl.text.trim()),
       });
 
@@ -39,8 +44,10 @@ class _AdminSetSalaryScreenState extends State<AdminSetSalaryScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Salary set successfully')),
         );
-        _employeeIdCtrl.clear();
+
         _salaryCtrl.clear();
+
+        Navigator.pop(context); // ✅ optional but professional UX
       } else {
         ScaffoldMessenger.of(
           context,
@@ -64,15 +71,11 @@ class _AdminSetSalaryScreenState extends State<AdminSetSalaryScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            SoftCard(
-              child: TextField(
-                controller: _employeeIdCtrl,
-                decoration: const InputDecoration(
-                  hintText: 'Employee ID',
-                  border: InputBorder.none,
-                ),
-              ),
+            Text(
+              'Set Salary for ${widget.employeeName}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 20),
 
             const SizedBox(height: 15),
 

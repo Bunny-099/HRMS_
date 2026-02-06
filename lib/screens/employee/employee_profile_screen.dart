@@ -5,6 +5,7 @@ import 'package:hrms/services/employee_service.dart';
 import 'package:hrms/widgets/soft_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:hrms/screens/dashboards/admin/admin_set_salary_screen.dart';
 
 const String baseUrl = "http://13.233.98.86:4000";
 
@@ -339,6 +340,26 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
               ),
             ),
             const SizedBox(height: 20),
+            if (widget.isAdminView) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SoftButton(
+                  text: 'Set Salary',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AdminSetSalaryScreen(
+                          employeeId: widget.userId!,
+                          employeeName: fullName,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
 
             // Tab bar
             Container(

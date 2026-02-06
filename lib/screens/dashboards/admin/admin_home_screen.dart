@@ -7,7 +7,6 @@ import 'package:hrms/services/admin_service.dart';
 import 'package:hrms/widgets/soft_ui.dart';
 import 'package:hrms/screens/dashboards/admin/admin_set_salary_screen.dart';
 
-
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
 
@@ -184,7 +183,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    const AdminSetSalaryScreen(),
+                                    const EmployeeListScreen(),
                               ),
                             );
                             break;

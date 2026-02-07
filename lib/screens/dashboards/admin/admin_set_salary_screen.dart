@@ -24,43 +24,48 @@ class _AdminSetSalaryScreenState extends State<AdminSetSalaryScreen> {
 
   bool _loading = false;
 
-  Future<void> _setSalary() async {
-    if (_salaryCtrl.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('All fields are required')));
-      return;
-    }
+Future<void> _setSalary() async {
+  print("EMPLOYEE ID FROM UI: ${widget.employeeId}");
 
-    try {
-      setState(() => _loading = true);
-
-      final response = await _api.post('/salary/set', {
-        'employeeId': widget.employeeId, // 🔥 CORRECT
-        'monthlySalary': int.parse(_salaryCtrl.text.trim()),
-      });
-
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Salary set successfully')),
-        );
-
-        _salaryCtrl.clear();
-
-        Navigator.pop(context); // ✅ optional but professional UX
-      } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Failed to set salary')));
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Server error')));
-    } finally {
-      setState(() => _loading = false);
-    }
+  if (_salaryCtrl.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('All fields are required')),
+    );
+    return;
   }
+
+  try {
+    setState(() => _loading = true);
+
+    final response = await _api.post('/salary', {
+      'employeeId': widget.employeeId,
+      'salary': int.parse(_salaryCtrl.text.trim()),
+    });
+
+    // ✅ response IS http.Response → decode it
+    final Map<String, dynamic> data = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'] ?? 'Salary set successfully')),
+      );
+
+      _salaryCtrl.clear();
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'] ?? 'Failed to set salary')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Server error')),
+    );
+  } finally {
+    setState(() => _loading = false);
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {

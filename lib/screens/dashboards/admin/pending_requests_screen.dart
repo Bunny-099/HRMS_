@@ -48,12 +48,29 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
   // 🔹 Approve employee
   Future<void> _approveEmployee(String userId) async {
     await AdminService.approveEmployee(userId);
-    _refreshEmployees();
+
+    setState(() {
+      pendingEmployees.removeWhere((e) => e['_id'] == userId);
+    });
 
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Employee approved')));
+
+    _refreshEmployees(); // safety refresh
   }
+
+   // reject employee
+ Future<void> _rejectEmployee(String userId) async {
+  await AdminService.rejectEmployee(userId, 'Rejected');
+
+  setState(() {
+    pendingEmployees.removeWhere((e) => e['_id'] == userId);
+  });
+
+  _refreshEmployees(); // optional safety sync
+}
+
 
   // 🔹 Approve leave
   Future<void> _approveLeave(String leaveId) async {
@@ -105,60 +122,67 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
 
   // ================= EMPLOYEE LIST =================
 
- Widget _buildEmployeeList() {
-  if (pendingEmployees.isEmpty) {
+  Widget _buildEmployeeList() {
+    if (pendingEmployees.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: _refreshEmployees,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: const [
+            SizedBox(height: 200),
+            Center(child: Text('No pending employees')),
+          ],
+        ),
+      );
+    }
+
     return RefreshIndicator(
       onRefresh: _refreshEmployees,
-      child: ListView(
+      child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
-        children: const [
-          SizedBox(height: 200),
-          Center(child: Text('No pending employees')),
-        ],
+        itemCount: pendingEmployees.length,
+        itemBuilder: (context, index) {
+          final emp = pendingEmployees[index];
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: ListTile(
+              title: Text(emp['name'] ?? emp['fullName'] ?? 'Employee'),
+              subtitle: Text(emp['email'] ?? '-'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.check_circle, color: Colors.green),
+                    onPressed: () => _approveEmployee(emp['_id']),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.cancel, color: Colors.red),
+                    onPressed: () => _rejectEmployee(emp['_id']),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  return RefreshIndicator(
-    onRefresh: _refreshEmployees,
-    child: ListView.builder(
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: pendingEmployees.length,
-      itemBuilder: (context, index) {
-        final emp = pendingEmployees[index];
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: ListTile(
-            title: Text(emp['name'] ?? emp['fullName'] ?? 'Employee'),
-            subtitle: Text(emp['email'] ?? '-'),
-            trailing: ElevatedButton(
-              onPressed: () => _approveEmployee(emp['_id']),
-              child: const Text('Approve'),
-            ),
-          ),
-        );
-      },
-    ),
-  );
-}
-
-
   // ================= LEAVE LIST =================
 
   Widget _buildLeaveList() {
-if (pendingLeaves.isEmpty) {
-  return RefreshIndicator(
-    onRefresh: _refreshLeaves,
-    child: ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      children: const [
-        SizedBox(height: 200),
-        Center(child: Text('No pending leaves')),
-      ],
-    ),
-  );
-}
-
+    if (pendingLeaves.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: _refreshLeaves,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: const [
+            SizedBox(height: 200),
+            Center(child: Text('No pending leaves')),
+          ],
+        ),
+      );
+    }
 
     return RefreshIndicator(
       onRefresh: _refreshLeaves,

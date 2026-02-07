@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/token_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminService {
   static const String baseUrl = "http://13.233.98.86:4000/api";
@@ -22,6 +23,16 @@ Uri.parse("$baseUrl/admin/pending-employees"),
       return [];
     }
   }
+  static Future<Map<String, String>> _authHeaders() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  };
+}
+
   static Future<Map<String, dynamic>> getAdminStats() async {
   final token = await TokenHelper.getToken();
 
@@ -54,6 +65,15 @@ Uri.parse("$baseUrl/admin/pending-employees"),
 
     return response.statusCode == 200;
   }
+  // 🔹 Reject employee
+  static Future<void> rejectEmployee(String userId, String reason) async {
+  await http.post(
+    Uri.parse('$baseUrl/admin/employees/$userId/reject'),
+    headers: await _authHeaders(),
+    body: jsonEncode({'reason': reason}),
+  );
+}
+
   // 🔹 Get pending leaves (HR)
 static Future<List<dynamic>> getPendingLeaves() async {
   final token = await TokenHelper.getToken();

@@ -1,7 +1,7 @@
-import 'dart:ui'; // 🟢 ADDED: Required for Glassmorphic ImageFilter.blur
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hrms/screens/auth/login_screen.dart';
-import 'package:hrms/widgets/soft_ui.dart'; // Kept intact to avoid breaking imports
+import 'package:hrms/widgets/soft_ui.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -15,7 +15,7 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  // 🟢 Upgraded Dialog to match dark theme without touching logic
+
   void _showDialog(String title, String message, {VoidCallback? onOk}) {
     showDialog(
       context: context,
@@ -68,8 +68,6 @@ class _SignupScreenState extends State<SignupScreen> {
     _confirmPasswordController.dispose();
     super.dispose();
   }
-
-  // 🔐 SIGNUP FUNCTION (BACKEND LOGIC & VALIDATIONS 100% PRESERVED)
   Future<void> _signup() async {
     if (_nameController.text.isEmpty) {
       _showDialog('Error', 'Please enter your full name');

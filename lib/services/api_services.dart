@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/api_constants.dart';
 
 class ApiService {
-static const String baseUrl = 'https://unelevated-rotundly-rashad.ngrok-free.dev/api';
+  final String baseUrl = ApiConstants.baseUrl;
 
 
   Future<String?> _getToken() async {

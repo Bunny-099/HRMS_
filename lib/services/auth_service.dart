@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/api_constants.dart';
 
 class AuthService {
-  static const String baseUrl = "https://unelevated-rotundly-rashad.ngrok-free.dev/api";
+  static const String baseUrl = ApiConstants.baseUrl;
 
   static Future<bool> login(String email, String password) async {
     final response = await http.post(

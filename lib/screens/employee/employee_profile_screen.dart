@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:hrms/screens/dashboards/admin/admin_set_salary_screen.dart';
 
-const String baseUrl = "https://unelevated-rotundly-rashad.ngrok-free.dev";
+const String baseUrl = "https://zenzio-hrms-akbyh6edccc6czgz.centralindia-01.azurewebsites.net";
 
 class EmployeeProfileScreen extends StatefulWidget {
   final String? userId;

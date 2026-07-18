@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/token_helper.dart';
+import '../constants/api_constants.dart';
 
 class LeaveService {
-  static const String baseUrl = 'https://unelevated-rotundly-rashad.ngrok-free.dev/api/leaves';
+  static const String baseUrl = "${ApiConstants.baseUrl}/leaves";
 
   // ================= APPLY LEAVE =================
   static Future<void> applyLeave({

@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../utils/token_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../constants/api_constants.dart';
 
 class AdminService {
-  static const String baseUrl = "https://unelevated-rotundly-rashad.ngrok-free.dev/api";
+  static const String baseUrl = ApiConstants.baseUrl;
 
   // 🔹 Get pending employees (FIXED ENDPOINT)
   static Future<List<dynamic>> getPendingEmployees() async {

@@ -4,6 +4,7 @@ import 'package:hrms/screens/auth/login_screen.dart';
 import 'package:hrms/widgets/soft_ui.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../../constants/api_constants.dart';
 
 class SignupScreen extends StatefulWidget {
   static const String id = 'signup_screen';
@@ -132,7 +133,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse("https://unelevated-rotundly-rashad.ngrok-free.dev/api/auth/register"),
+        Uri.parse("${ApiConstants.baseUrl}/auth/register"),
         headers: {
           "Content-Type": "application/json",
         },

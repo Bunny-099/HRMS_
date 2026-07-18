@@ -1,12 +1,12 @@
-import 'dart:ui'; // 🟢 ADDED: Required for Glassmorphic ImageFilter.blur
+import 'dart:ui'; 
 import 'package:flutter/material.dart';
 import 'package:hrms/screens/attendance/attendance_history_screen.dart';
 import 'package:hrms/screens/employee/employee_list_screen.dart';
 import 'package:hrms/screens/attendance/holiday_calendar_screen.dart';
-import 'package:hrms/screens/payroll/salary_structure_screen.dart'; // Kept intact
+import 'package:hrms/screens/payroll/salary_structure_screen.dart';
 import 'package:hrms/services/admin_service.dart';
-import 'package:hrms/widgets/soft_ui.dart'; // Kept intact to avoid breaking imports
-import 'package:hrms/screens/dashboards/admin/admin_set_salary_screen.dart'; // Kept intact
+import 'package:hrms/widgets/soft_ui.dart'; 
+import 'package:hrms/screens/dashboards/admin/admin_set_salary_screen.dart'; 
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -45,12 +45,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       backgroundColor: bgDark,
       body: Stack(
         children: [
-          // 1. Deep Solid Ambient Background (Removed gradient for minimalism)
+
           Container(
             color: bgDark,
           ),
-
-          // 🟢 2. Ultra-Subtle Ambient Glow (Reduced opacity for flatter look)
           Positioned(
             top: -100,
             left: -100,
@@ -82,7 +80,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             ),
           ),
 
-          // 3. Main Scrollable Content
           SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),

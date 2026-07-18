@@ -277,16 +277,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           value: loading ? '...' : stats!['activeEmployees'].toString(),
                           color: const Color(0xFF3B82F6),
                         ),
-                        _buildMinimalStatCard(
-                          title: 'Absent',
-                          value: '4', // Static per original code
-                          color: const Color(0xFFEF4444),
-                        ),
-                        _buildMinimalStatCard(
-                          title: 'Leaves',
-                          value: '3', // Static per original code
-                          color: const Color(0xFFF97316),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 40),

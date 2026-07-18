@@ -19,7 +19,8 @@ Uri.parse("$baseUrl/admin/pending-employees"),
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final data = jsonDecode(response.body);
+      return data['pendingEmployees'] ?? [];
     } else {
       return [];
     }

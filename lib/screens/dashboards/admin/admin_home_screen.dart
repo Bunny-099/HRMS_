@@ -34,51 +34,50 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     });
   }
 
-  // 🟢 Dark Glassmorphism Color Tokens (Synced across App)
-  final Color bgDarkStart = const Color(0xFF090D16);
-  final Color bgDarkEnd = const Color(0xFF111827);
-  final Color textWhite = Colors.white;
-  final Color textMuted = const Color(0xFF94A3B8);
+  // 🟢 Ultra-Minimal Dark Glassmorphism Color Tokens
+  final Color bgDark = const Color(0xFF0B0F19); // Flatter, deeper dark
+  final Color textWhite = const Color(0xFFF8FAFC);
+  final Color textMuted = const Color(0xFF64748B);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgDarkStart,
+      backgroundColor: bgDark,
       body: Stack(
         children: [
-          // 1. Deep Midnight Ambient Gradient
+          // 1. Deep Solid Ambient Background (Removed gradient for minimalism)
           Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [bgDarkStart, bgDarkEnd, const Color(0xFF0A0F1D)],
-              ),
-            ),
+            color: bgDark,
           ),
 
-          // 🟢 2. Subtle Ambient Glow Orbs for Glass Effect
+          // 🟢 2. Ultra-Subtle Ambient Glow (Reduced opacity for flatter look)
           Positioned(
-            top: -50,
-            left: -80,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF8B5CF6).withOpacity(0.12), // Admin Violet Glow
+            top: -100,
+            left: -100,
+            child: ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+              child: Container(
+                width: 350,
+                height: 350,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF6366F1).withOpacity(0.05),
+                ),
               ),
             ),
           ),
           Positioned(
-            bottom: -150,
-            right: -100,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF3B82F6).withOpacity(0.08), // Sleek Blue Glow
+            bottom: -50,
+            right: -50,
+            child: ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF3B82F6).withOpacity(0.04),
+                ),
               ),
             ),
           ),
@@ -87,76 +86,72 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    // 🟢 4. FROSTED GLASS WELCOME SECTION
+                    // 🟢 4. FROSTED GLASS WELCOME SECTION (Ultra-Minimal)
+                    const SizedBox(height: 12),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(20),
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.04),
-                            borderRadius: BorderRadius.circular(24),
+                            color: Colors.white.withOpacity(0.02), // Extremely sheer
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.1),
-                              width: 1,
+                              color: Colors.white.withOpacity(0.05), // Thinner border
+                              width: 0.5,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 30,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
+                            // Removed BoxShadow for flat aesthetics
                           ),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start, // Left aligned for sleekness
                             children: [
-                              // Glowing Avatar
-                              Container(
-                                padding: const EdgeInsets.all(18),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: const Color(0xFF8B5CF6).withOpacity(0.15),
-                                  border: Border.all(
-                                    color: const Color(0xFF8B5CF6).withOpacity(0.4),
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF8B5CF6).withOpacity(0.2),
-                                      blurRadius: 20,
+                              Row(
+                                children: [
+                                  // Minimal Avatar
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: const Color(0xFF8B5CF6).withOpacity(0.1),
                                     ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.admin_panel_settings_rounded,
-                                  size: 46,
-                                  color: Color(0xFFC4B5FD), // Soft purple
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                'Welcome, Admin!',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                  letterSpacing: -0.3,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                'HR Management Dashboard',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: textMuted,
-                                ),
+                                    child: const Icon(
+                                      Icons.admin_panel_settings_rounded,
+                                      size: 28,
+                                      color: Color(0xFFA78BFA),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Welcome, Admin!',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                          color: textWhite,
+                                          letterSpacing: -0.5,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'HR Management Dashboard',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: textMuted,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -164,16 +159,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 36),
+                    const SizedBox(height: 40),
 
                     // Section Title
-                    const Text(
-                      'HR Management',
+                    Text(
+                      'Management Tools',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
+                        color: textMuted,
+                        letterSpacing: 1.0,
+                        textBaseline: TextBaseline.alphabetic,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -186,33 +182,29 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         crossAxisCount: 2,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 1.0,
+                        childAspectRatio: 1.2, // Slightly wider for minimalism
                       ),
                       itemCount: 4,
                       itemBuilder: (context, index) {
                         final adminFeatures = [
                           {
-                            'icon': Icons.people_outline_rounded,
+                            'icon': Icons.people_alt_outlined,
                             'title': 'Employees',
-                            'subtitle': 'Manage staff',
-                            'color': const Color(0xFF8B5CF6), // Royal Violet
+                            'color': const Color(0xFF8B5CF6), // Violet
                           },
                           {
-                            'icon': Icons.event_available_rounded,
+                            'icon': Icons.calendar_month_outlined,
                             'title': 'Holidays',
-                            'subtitle': 'Manage holidays',
                             'color': const Color(0xFF10B981), // Emerald
                           },
                           {
                             'icon': Icons.access_time_rounded,
                             'title': 'Attendance',
-                            'subtitle': 'View reports',
-                            'color': const Color(0xFF3B82F6), // Azure Blue
+                            'color': const Color(0xFF3B82F6), // Blue
                           },
                           {
-                            'icon': Icons.payments_outlined,
+                            'icon': Icons.receipt_long_outlined,
                             'title': 'Payroll',
-                            'subtitle': 'Manage salaries',
                             'color': const Color(0xFFF59E0B), // Amber
                           },
                         ];
@@ -223,103 +215,84 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           onTap: () {
                             switch (index) {
                               case 0:
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const EmployeeListScreen()),
-                                );
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const EmployeeListScreen()));
                                 break;
                               case 1:
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const HolidayCalendarScreen()),
-                                );
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const HolidayCalendarScreen()));
                                 break;
                               case 2:
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const AttendanceHistoryScreen()),
-                                );
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const AttendanceHistoryScreen()));
                                 break;
                               case 3:
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const EmployeeListScreen()),
-                                );
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const EmployeeListScreen())); // Preserved existing route
                                 break;
                             }
                           },
-                          child: _buildFeatureCard(
+                          child: _buildMinimalFeatureCard(
                             icon: feature['icon'] as IconData,
                             title: feature['title'] as String,
-                            subtitle: feature['subtitle'] as String,
                             color: feature['color'] as Color,
                           ),
                         );
                       },
                     ),
 
-                    const SizedBox(height: 36),
+                    const SizedBox(height: 40),
 
                     // Quick Stats Section Title
-                    const Text(
-                      'Quick Stats',
+                    Text(
+                      'Overview',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
+                        color: textMuted,
+                        letterSpacing: 1.0,
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    // 🟢 6. FROSTED GLASS STAT PILLS (Responsive Grid)
+                    // 🟢 6. FROSTED GLASS STAT PILLS (Ultra-Minimal)
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 1.6, // Makes them look like wide sleek pills
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 1.8, // Flatter pills
                       children: [
-                        _buildStatCard(
-                          title: 'Present Today',
+                        _buildMinimalStatCard(
+                          title: 'Present',
                           value: loading ? '...' : stats!['presentToday'].toString(),
-                          icon: Icons.how_to_reg_rounded,
-                          color: const Color(0xFF10B981), // Emerald
+                          color: const Color(0xFF10B981),
                         ),
-                        _buildStatCard(
-                          title: 'Total Employees',
+                        _buildMinimalStatCard(
+                          title: 'Total Staff',
                           value: loading ? '...' : stats!['totalEmployees'].toString(),
-                          icon: Icons.groups_rounded,
-                          color: const Color(0xFF8B5CF6), // Violet
+                          color: const Color(0xFF8B5CF6),
                         ),
-                        _buildStatCard(
-                          title: 'Pending Requests',
+                        _buildMinimalStatCard(
+                          title: 'Requests',
                           value: loading ? '...' : stats!['pendingEmployees'].toString(),
-                          icon: Icons.pending_actions_rounded,
-                          color: const Color(0xFFF59E0B), // Amber
+                          color: const Color(0xFFF59E0B),
                         ),
-                        _buildStatCard(
-                          title: "Active Employees",
+                        _buildMinimalStatCard(
+                          title: "Active",
                           value: loading ? '...' : stats!['activeEmployees'].toString(),
-                          icon: Icons.check_circle_outline_rounded,
-                          color: const Color(0xFF3B82F6), // Blue
+                          color: const Color(0xFF3B82F6),
                         ),
-                        _buildStatCard(
-                          title: 'Absent Today',
+                        _buildMinimalStatCard(
+                          title: 'Absent',
                           value: '4', // Static per original code
-                          icon: Icons.person_off_rounded,
-                          color: const Color(0xFFEF4444), // Red
+                          color: const Color(0xFFEF4444),
                         ),
-                        _buildStatCard(
-                          title: 'Pending Leaves',
+                        _buildMinimalStatCard(
+                          title: 'Leaves',
                           value: '3', // Static per original code
-                          icon: Icons.beach_access_rounded,
-                          color: const Color(0xFFF97316), // Orange
+                          color: const Color(0xFFF97316),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -330,126 +303,78 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     );
   }
 
-  // 🟢 Custom Glassmorphic Feature Card
-  Widget _buildFeatureCard({
+  // 🟢 Ultra-Minimal Feature Card (No border, no shadow, pure transparent tint)
+  Widget _buildMinimalFeatureCard({
     required IconData icon,
     required String title,
-    required String subtitle,
     required Color color,
   }) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.08),
-              width: 1,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.02), // Just a hint of surface
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 28, color: color.withOpacity(0.8)),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: textWhite.withOpacity(0.9),
+              letterSpacing: 0.2,
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.12),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: color.withOpacity(0.25),
-                    width: 1,
-                  ),
-                ),
-                child: Icon(icon, size: 28, color: color),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white.withOpacity(0.5),
-                ),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
 
-  // 🟢 Custom Glassmorphic Stat Pill Box
-  Widget _buildStatCard({
+  // 🟢 Ultra-Minimal Stat Pill
+  Widget _buildMinimalStatCard({
     required String title,
     required String value,
-    required IconData icon,
     required Color color,
   }) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.04),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.08),
-              width: 1,
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(icon, size: 18, color: color),
-                  ),
-                  Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white.withOpacity(0.6),
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.02), // Just a hint of surface
+        borderRadius: BorderRadius.circular(16),
+        border: Border(
+          left: BorderSide(
+            color: color.withOpacity(0.5), // Subtle color accent on left edge only
+            width: 3,
           ),
         ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: textWhite,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: textMuted,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }

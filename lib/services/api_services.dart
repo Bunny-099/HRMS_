@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-static const String baseUrl = 'http://13.233.98.86:4000/api';
+static const String baseUrl = 'https://unelevated-rotundly-rashad.ngrok-free.dev/api';
 
 
   Future<String?> _getToken() async {

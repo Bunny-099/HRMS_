@@ -1,17 +1,16 @@
+import 'dart:ui'; // 🟢 ADDED: Required for Glassmorphic ImageFilter.blur
 import 'package:flutter/material.dart';
 import 'package:hrms/screens/dashboards/admin/admin_home_screen.dart';
 import 'package:hrms/screens/auth/login_screen.dart';
 import 'package:hrms/utils/role_utils.dart';
-import 'package:hrms/widgets/soft_ui.dart';
+import 'package:hrms/widgets/soft_ui.dart'; // Kept intact to avoid breaking imports
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hrms/screens/dashboards/admin/pending_requests_screen.dart';
-
 import 'package:hrms/screens/dashboards/admin/admin_profile_placeholder.dart';
-
 
 class AdminDashboard extends StatefulWidget {
   static const String id = 'admin_dashboard';
-  
+
   const AdminDashboard({super.key});
 
   @override
@@ -20,14 +19,13 @@ class AdminDashboard extends StatefulWidget {
 
 class _AdminDashboardState extends State<AdminDashboard> {
   int _selectedIndex = 0;
-  
-final List<Widget> _adminScreens = [
-  const AdminHomeScreen(),              // index 0
-  const AdminProfilePlaceholder(),      // index 1
-  const PendingRequestsScreen(),        // index 2
-];
 
-
+  // 🟢 Admin-specific routes (100% PRESERVED)
+  final List<Widget> _adminScreens = [
+    const AdminHomeScreen(),              // index 0
+    const AdminProfilePlaceholder(),      // index 1
+    const PendingRequestsScreen(),        // index 2
+  ];
 
   @override
   void initState() {
@@ -35,10 +33,10 @@ final List<Widget> _adminScreens = [
     _checkUserRole();
   }
 
-  // Method to check if the user has admin role
+  // 🔐 Method to check if the user has admin role (100% PRESERVED)
   void _checkUserRole() async {
     bool isAdmin = await RoleUtils.isAdmin();
-    
+
     if (!isAdmin) {
       // If user is not admin, redirect to login
       Navigator.pushReplacement(
@@ -50,78 +48,211 @@ final List<Widget> _adminScreens = [
 
   @override
   Widget build(BuildContext context) {
+    // 🟢 Sleek Dark Glassmorphism Color Tokens (Synced across app)
+    const Color bgDarkStart = Color(0xFF090D16);
+    const Color textWhite = Colors.white;
+    const Color accentBlue = Color(0xFF3B82F6);
+    const Color adminBadgeColor = Color(0xFF8B5CF6); // Royal Violet for Admin Authority
+    const Color textMuted = Color(0xFF64748B);
+
     return Scaffold(
+      backgroundColor: bgDarkStart,
+
+      // 🟢 1. FROSTED GLASS APP BAR
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFACD),
+        backgroundColor: bgDarkStart.withOpacity(0.75),
         elevation: 0,
+        centerTitle: true,
+        // Applies true blur behind the app bar when scrolling content underneath
+        flexibleSpace: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border(
+                  bottom: BorderSide(
+                    color: Colors.white.withOpacity(0.08),
+                    width: 1,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              'assets/images/app_logo/logo.jpeg',
-              width: 30,
-              height: 30,
-              fit: BoxFit.contain,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                'assets/images/app_logo/logo.jpeg',
+                width: 28,
+                height: 28,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.business_center_rounded,
+                  size: 26,
+                  color: adminBadgeColor,
+                ),
+              ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             const Text(
-              'E-Smart HR - Admin',
+              'E-Smart HR',
               style: TextStyle(
-                color: Color(0xFFFF69B4),
-                fontWeight: FontWeight.bold,
+                color: textWhite,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.3,
+              ),
+            ),
+            const SizedBox(width: 6),
+            // Distinct Admin Role Badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: adminBadgeColor.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: adminBadgeColor.withOpacity(0.35), width: 1),
+              ),
+              child: const Text(
+                'Admin',
+                style: TextStyle(
+                  color: adminBadgeColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.3,
+                ),
               ),
             ),
           ],
         ),
         actions: [
-          IconButton(
-            onPressed: () async {
-              // Clear user session
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.remove('token');
-              await prefs.remove('role');
-              
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
-            },
-            icon: const Icon(
-              Icons.logout,
-              color: Color(0xFFFF69B4),
+          // Sleek Logout Action Button (Exact SharedPreferences logic preserved!)
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: IconButton(
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.remove('token');
+                await prefs.remove('role');
+
+                if (!mounted) return;
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              },
+              tooltip: 'Logout',
+              icon: Container(
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEF4444).withOpacity(0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFFEF4444).withOpacity(0.25),
+                  ),
+                ),
+                child: const Icon(
+                  Icons.logout_rounded,
+                  color: Color(0xFFF87171), // Professional subtle coral red
+                  size: 18,
+                ),
+              ),
             ),
           ),
         ],
       ),
+
+      // 🟢 2. MAIN BODY (IndexedStack preserved 100%)
       body: IndexedStack(
         index: _selectedIndex,
         children: _adminScreens,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFFFFFACD),
-        selectedItemColor: const Color(0xFFFF69B4),
-        unselectedItemColor: Colors.grey,
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+
+      // 🟢 3. FROSTED GLASS BOTTOM NAVIGATION DOCK (With 3 Admin Tabs)
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF0A0F1D).withOpacity(0.85),
+          border: Border(
+            top: BorderSide(
+              color: Colors.white.withOpacity(0.08),
+              width: 1,
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+            child: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: Colors.transparent, // Handled by glass container
+              selectedItemColor: accentBlue, // Consistent brand Blue for active tabs
+              unselectedItemColor: textMuted,
+              elevation: 0,
+              currentIndex: _selectedIndex,
+              selectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+                letterSpacing: 0.2,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 12,
+              ),
+              onTap: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Icon(Icons.dashboard_outlined),
+                  ),
+                  activeIcon: Padding(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Icon(Icons.dashboard_rounded),
+                  ),
+                  label: 'Dashboard',
+                ),
+                BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Icon(Icons.person_outline_rounded),
+                  ),
+                  activeIcon: Padding(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Icon(Icons.person_rounded),
+                  ),
+                  label: 'Profile',
+                ),
+                // 3rd Tab specifically for Admin
+                BottomNavigationBarItem(
+                  icon: Padding(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Icon(Icons.pending_actions_outlined),
+                  ),
+                  activeIcon: Padding(
+                    padding: EdgeInsets.only(bottom: 4),
+                    child: Icon(Icons.pending_actions_rounded),
+                  ),
+                  label: 'Requests',
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-    icon: Icon(Icons.pending_actions),
-    label: 'Requests',
-          ),
-        ],
+        ),
       ),
     );
   }

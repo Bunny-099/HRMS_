@@ -4,7 +4,7 @@ import '../utils/token_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminService {
-  static const String baseUrl = "http://13.233.98.86:4000/api";
+  static const String baseUrl = "https://unelevated-rotundly-rashad.ngrok-free.dev/api";
 
   // 🔹 Get pending employees (FIXED ENDPOINT)
   static Future<List<dynamic>> getPendingEmployees() async {

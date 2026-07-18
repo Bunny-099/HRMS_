@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../utils/token_helper.dart';
 
 class LeaveService {
-  static const String baseUrl = 'http://13.233.98.86:4000/api/leaves';
+  static const String baseUrl = 'https://unelevated-rotundly-rashad.ngrok-free.dev/api/leaves';
 
   // ================= APPLY LEAVE =================
   static Future<void> applyLeave({

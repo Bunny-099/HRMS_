@@ -106,7 +106,7 @@ class _EmployeeHomeScreenState extends State<EmployeeHomeScreen> {
                         backgroundImage:
                             profile != null && profile!['profileImage'] != null
                             ? NetworkImage(
-                                "http://13.233.98.86:4000${profile!['profileImage']}",
+                                "https://unelevated-rotundly-rashad.ngrok-free.dev${profile!['profileImage']}",
                               )
                             : null,
                         child:

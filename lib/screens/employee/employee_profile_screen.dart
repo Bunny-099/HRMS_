@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:hrms/screens/dashboards/admin/admin_set_salary_screen.dart';
 
-const String baseUrl = "http://13.233.98.86:4000";
+const String baseUrl = "https://unelevated-rotundly-rashad.ngrok-free.dev";
 
 class EmployeeProfileScreen extends StatefulWidget {
   final String? userId;
@@ -82,7 +82,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
   String? error;
 
   late TabController _tabController;
-  late String fullName;
+  late String name;
   late String email;
   late String phone;
   late String department;
@@ -112,14 +112,14 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
       setState(() {
         employee = data;
 
-        fullName = data!['fullName'] ?? '';
+        name = data!['fullName'] ?? '';
         email = data['email'] ?? '';
         phone = data['phone'] ?? '';
         department = data['department'] ?? '';
         role = data['role'] ?? 'Employee';
         status = data['isApproved'] == true ? 'Approved' : 'Pending';
 
-        fullNameController.text = fullName;
+        fullNameController.text = name;
         phoneController.text = phone;
 
         isLoading = false;
@@ -178,7 +178,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          fullName,
+                          name,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -213,7 +213,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
                                 ),
                                 onPressed: () {
                                   setState(() {
-                                    fullNameController.text = fullName;
+                                    fullNameController.text = name;
                                     phoneController.text = phone;
                                     isEditing = false;
                                   });
@@ -288,7 +288,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
                   ),
                   const SizedBox(height: 15),
                   Text(
-                    fullName,
+                    name,
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -351,7 +351,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
                       MaterialPageRoute(
                         builder: (_) => AdminSetSalaryScreen(
                           employeeId: widget.userId!,
-                          employeeName: fullName,
+                          employeeName: name,
                         ),
                       ),
                     );

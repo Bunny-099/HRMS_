@@ -121,7 +121,6 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
   }
 
   // ================= EMPLOYEE LIST =================
-
   Widget _buildEmployeeList() {
     if (pendingEmployees.isEmpty) {
       return RefreshIndicator(

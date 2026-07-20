@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hrms/screens/auth/login_screen.dart';
 import 'package:hrms/screens/dashboards/admin/admin_dashboard.dart';
@@ -124,38 +126,62 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE91E63),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FadeTransition(
-              opacity: _logoFade,
-              child: ScaleTransition(
-                scale: _logoScale,
-                child: Image.asset(
-                  'assets/images/app_logo/logo.jpeg',
-                  height: 100,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            FadeTransition(
-              opacity: _textFade,
-              child: SlideTransition(
-                position: _textSlide,
-                child: const Text(
-                  'E-Smart HR',
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.5,
-                    color: Colors.white,
+      body: GlassBackground(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FadeTransition(
+                opacity: _logoFade,
+                child: ScaleTransition(
+                  scale: _logoScale,
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withOpacity(0.05),
+                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    ),
+                    child: Image.asset(
+                      'assets/images/app_logo/logo.jpeg',
+                      height: 100,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 32),
+              FadeTransition(
+                opacity: _textFade,
+                child: SlideTransition(
+                  position: _textSlide,
+                  child: const Text(
+                    'E-Smart HR',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -1,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              FadeTransition(
+                opacity: _textFade,
+                child: SlideTransition(
+                  position: _textSlide,
+                  child: Text(
+                    'Your Workplace Portal',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white.withOpacity(0.6),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

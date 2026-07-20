@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hrms/theme/soft_theme.dart';
-import 'package:hrms/widgets/soft_ui.dart';
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 import 'payslip_pdf_download_screen.dart';
 import 'dart:convert';
 import 'package:hrms/models/payslip_model.dart';
@@ -64,178 +64,158 @@ class _MonthlyPayslipScreenState extends State<MonthlyPayslipScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: GlassBackground(child: Center(child: CircularProgressIndicator())));
     }
 
     if (_error != null) {
-      return Scaffold(body: Center(child: Text(_error!)));
+      return Scaffold(body: GlassBackground(child: Center(child: Text(_error!, style: const TextStyle(color: Colors.white)))));
     }
 
     return Scaffold(
-      backgroundColor: SoftTheme.backgroundColor,
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: SoftCard(
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(shape: BoxShape.circle),
-                        child: const Icon(Icons.arrow_back, size: 20),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    'Monthly Payslip',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: SoftTheme.textColor,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              PayslipPdfDownloadScreen(payslip: payslip!),
-                        ),
-                      );
-                    },
-                    child: SoftCard(
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: const BoxDecoration(shape: BoxShape.circle),
-                        child: const Icon(Icons.download, size: 20),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Payslip header
-              SoftCard(
-                child: Column(
-                  children: [
-                    Text(
-                      'Payslip for $selectedMonth / $selectedYear',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: SoftTheme.textColor,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Employee: ${payslip!.employeeName}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: SoftTheme.hintColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                  ],
+      extendBodyBehindAppBar: true,
+      appBar: GlassAppBar(
+        title: 'Monthly Payslip',
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PayslipPdfDownloadScreen(payslip: payslip!),
                 ),
-              ),
-              const SizedBox(height: 20),
-
-              // Earnings section
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: _fetchPayslip,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-
-                    child: Column(
-                      children: [
-                        _buildSectionHeader('Attendance', Colors.blue),
-
-                        _buildPayslipRow(
-                          'Present Days',
-                          payslip!.attendance.presentDays.toDouble(),
+              );
+            },
+            icon: const Icon(Icons.file_download_rounded, color: Colors.white),
+          ),
+        ],
+      ),
+      body: GlassBackground(
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                // Payslip header summary
+                GlassCard(
+                  borderRadius: 24,
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Payslip for $selectedMonth / $selectedYear',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                        _buildPayslipRow(
-                          'Leave Days',
-                          payslip!.attendance.leaveDays.toDouble(),
-                        ),
-                        _buildPayslipRow(
-                          'LOP Days',
-                          payslip!.attendance.lopDays.toDouble(),
-                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.person_outline_rounded, size: 16, color: GlassTheme.textMuted),
+                          const SizedBox(width: 8),
+                          Text(
+                            payslip!.employeeName,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: GlassTheme.textMuted,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
 
-                        const SizedBox(height: 20),
-                        _buildSectionHeader('Earnings', Colors.green),
+                // Sections
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: _fetchPayslip,
+                    color: GlassTheme.accentGlow,
+                    backgroundColor: GlassTheme.bgDarkEnd,
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSectionHeader('Attendance', Colors.blueAccent),
+                          GlassCard(
+                            borderRadius: 20,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Column(
+                              children: [
+                                _buildPayslipItem('Present Days', payslip!.attendance.presentDays.toDouble(), isAmount: false),
+                                _buildPayslipItem('Leave Days', payslip!.attendance.leaveDays.toDouble(), isAmount: false),
+                                _buildPayslipItem('LOP Days', payslip!.attendance.lopDays.toDouble(), isAmount: false),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
 
-                        _buildPayslipRow(
-                          'Basic Salary',
-                          payslip!.earnings.basic,
-                        ),
-                        _buildPayslipRow('HRA', payslip!.earnings.hra),
-                        _buildPayslipRow(
-                          'Allowances',
-                          payslip!.earnings.allowances,
-                        ),
+                          _buildSectionHeader('Earnings', GlassTheme.successAccent),
+                          GlassCard(
+                            borderRadius: 20,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Column(
+                              children: [
+                                _buildPayslipItem('Basic Salary', payslip!.earnings.basic),
+                                _buildPayslipItem('HRA', payslip!.earnings.hra),
+                                _buildPayslipItem('Allowances', payslip!.earnings.allowances),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
 
-                        const SizedBox(height: 20),
+                          _buildSectionHeader('Deductions', GlassTheme.errorAccent),
+                          GlassCard(
+                            borderRadius: 20,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Column(
+                              children: [
+                                _buildPayslipItem('LOP Deduction', payslip!.deductions.lop),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 32),
 
-                        _buildSectionHeader('Deductions', Colors.red),
-
-                        _buildPayslipRow(
-                          'LOP Deduction',
-                          payslip!.deductions.lop,
-                        ),
-
-                        // Net salary
-                        SoftCard(
-                          child: Container(
-                            padding: const EdgeInsets.all(15),
+                          // Net salary total
+                          GlassCard(
+                            borderRadius: 24,
+                            padding: const EdgeInsets.all(24),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
+                                const Text(
                                   'Net Salary',
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: SoftTheme.textColor,
+                                    color: Colors.white,
                                   ),
                                 ),
                                 Text(
                                   '₹${payslip!.netSalary.toStringAsFixed(0)}',
-                                  style: TextStyle(
-                                    fontSize: 16,
+                                  style: const TextStyle(
+                                    fontSize: 22,
                                     fontWeight: FontWeight.bold,
-                                    color: SoftTheme.primaryColor,
+                                    color: GlassTheme.successAccent,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 40),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -243,69 +223,35 @@ class _MonthlyPayslipScreenState extends State<MonthlyPayslipScreen> {
   }
 
   Widget _buildSectionHeader(String title, Color color) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 12),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: color,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPayslipItem(String label, double value, {bool isAmount = true}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            title,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
+            label,
+            style: const TextStyle(fontSize: 14, color: Colors.white70),
+          ),
+          Text(
+            isAmount ? '₹${value.toStringAsFixed(0)}' : value.toStringAsFixed(0),
+            style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w600),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPayslipRow(String label, double amount) {
-    return SoftCard(
-      child: Container(
-        padding: const EdgeInsets.all(15),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: TextStyle(fontSize: 14, color: SoftTheme.textColor),
-            ),
-            Text(
-              '₹${amount.toStringAsFixed(0)}',
-              style: TextStyle(fontSize: 14, color: SoftTheme.textColor),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTotalRow(String label, double amount) {
-    return SoftCard(
-      child: Container(
-        padding: const EdgeInsets.all(15),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: SoftTheme.primaryColor,
-              ),
-            ),
-            Text(
-              '₹${amount.toStringAsFixed(0)}',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: SoftTheme.primaryColor,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

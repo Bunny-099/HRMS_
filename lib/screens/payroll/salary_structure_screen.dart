@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hrms/theme/soft_theme.dart';
-import 'package:hrms/widgets/soft_ui.dart';
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 
 class SalaryStructureScreen extends StatefulWidget {
   static const String id = 'salary_structure_screen';
@@ -69,199 +69,159 @@ class _SalaryStructureScreenState extends State<SalaryStructureScreen> {
     double netSalary = totalEarnings - totalDeductions;
 
     return Scaffold(
-      backgroundColor: SoftTheme.backgroundColor,
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: SoftCard(
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    'Salary Structure',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: SoftTheme.textColor,
-                    ),
-                  ),
-                  SoftCard(
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.info,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              
-              // Summary cards
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildSummaryCard(
-                      title: 'Total Earnings',
-                      amount: totalEarnings,
-                      color: Colors.green,
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: _buildSummaryCard(
-                      title: 'Total Deductions',
-                      amount: totalDeductions,
-                      color: Colors.red,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              _buildSummaryCard(
-                title: 'Net Salary',
-                amount: netSalary,
-                color: SoftTheme.primaryColor,
-              ),
-              const SizedBox(height: 30),
-              
-              // Salary components list
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      extendBodyBehindAppBar: true,
+      appBar: const GlassAppBar(
+        title: 'Salary Structure',
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: Icon(Icons.info_outline_rounded, color: Colors.white),
+          ),
+        ],
+      ),
+      body: GlassBackground(
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+                // Summary cards
+                Row(
                   children: [
-                    Text(
-                      'Earnings',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: SoftTheme.textColor,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: salaryComponents.where((component) => component.type == 'Earning').length,
-                        itemBuilder: (context, index) {
-                          final earningComponents = salaryComponents.where((component) => component.type == 'Earning').toList();
-                          final component = earningComponents[index];
-                          return _buildComponentCard(component);
-                        },
+                      child: _buildSummaryCard(
+                        title: 'Earnings',
+                        amount: totalEarnings,
+                        color: GlassTheme.successAccent,
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Deductions',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: SoftTheme.textColor,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
+                    const SizedBox(width: 16),
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: salaryComponents.where((component) => component.type == 'Deduction').length,
-                        itemBuilder: (context, index) {
-                          final deductionComponents = salaryComponents.where((component) => component.type == 'Deduction').toList();
-                          final component = deductionComponents[index];
-                          return _buildComponentCard(component);
-                        },
+                      child: _buildSummaryCard(
+                        title: 'Deductions',
+                        amount: totalDeductions,
+                        color: GlassTheme.errorAccent,
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                _buildSummaryCard(
+                  title: 'Net Salary',
+                  amount: netSalary,
+                  color: GlassTheme.accentGlow,
+                  isLarge: true,
+                ),
+                const SizedBox(height: 32),
+                
+                // Salary components list
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionHeader('Earnings', GlassTheme.successAccent),
+                        _buildComponentsList('Earning'),
+                        const SizedBox(height: 32),
+                        _buildSectionHeader('Deductions', GlassTheme.errorAccent),
+                        _buildComponentsList('Deduction'),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSummaryCard({required String title, required double amount, required Color color}) {
-    return SoftCard(
-      child: Container(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          children: [
-            Text(
-              '₹${amount.toStringAsFixed(0)}',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                color: SoftTheme.hintColor,
-              ),
-            ),
-          ],
+  Widget _buildSectionHeader(String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 12),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: color,
+          letterSpacing: 0.5,
         ),
       ),
     );
   }
 
-  Widget _buildComponentCard(SalaryComponent component) {
-    return SoftCard(
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(15),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                component.name,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: SoftTheme.textColor,
-                ),
+  Widget _buildComponentsList(String type) {
+    final components = salaryComponents.where((c) => c.type == type).toList();
+    return GlassCard(
+      borderRadius: 20,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        children: components.map((c) => _buildComponentRow(c)).toList(),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard({required String title, required double amount, required Color color, bool isLarge = false}) {
+    return GlassCard(
+      borderRadius: 20,
+      padding: EdgeInsets.all(isLarge ? 24 : 16),
+      child: Column(
+        children: [
+          Text(
+            '₹${amount.toStringAsFixed(0)}',
+            style: TextStyle(
+              fontSize: isLarge ? 28 : 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 13,
+              color: GlassTheme.textMuted,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildComponentRow(SalaryComponent component) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              component.name,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.white70,
               ),
             ),
-            Text(
-              '₹${component.amount.toStringAsFixed(0)}',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: component.type == 'Earning' 
-                    ? Colors.green 
-                    : Colors.red,
-              ),
+          ),
+          Text(
+            '₹${component.amount.toStringAsFixed(0)}',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: component.type == 'Earning' 
+                  ? GlassTheme.successAccent 
+                  : GlassTheme.errorAccent,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

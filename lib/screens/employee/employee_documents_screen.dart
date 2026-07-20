@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hrms/widgets/soft_ui.dart';
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 
 class EmployeeDocumentsScreen extends StatefulWidget {
   static const String id = 'employee_documents_screen';
@@ -53,92 +54,36 @@ class _EmployeeDocumentsScreenState extends State<EmployeeDocumentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFACD),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
+      extendBodyBehindAppBar: true,
+      appBar: const GlassAppBar(
+        title: 'Employee Documents',
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 8.0),
+            child: Icon(Icons.add, color: Colors.white),
+          ),
+        ],
+      ),
+      body: GlassBackground(
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                // Documents list
+                Expanded(
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: documents.length,
+                    itemBuilder: (context, index) {
+                      final document = documents[index];
+                      return _buildDocumentCard(document);
                     },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFFE0E5EC),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: const Color(0xFFFFFACD),
-                            offset: Offset(-3, -3),
-                            blurRadius: 5,
-                          ),
-                          BoxShadow(
-                            color: Color(0xFFA3B1C6),
-                            offset: Offset(3, 3),
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                      ),
-                    ),
                   ),
-                  Text(
-                    'Employee Documents',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF4A6572),
-                    ),
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFE0E5EC),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: const Color(0xFFFFFACD),
-                          offset: Offset(-3, -3),
-                          blurRadius: 5,
-                        ),
-                        BoxShadow(
-                          color: Color(0xFFA3B1C6),
-                          offset: Offset(3, 3),
-                          blurRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.add,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              
-              // Documents list
-              Expanded(
-                child: ListView.builder(
-                  itemCount: documents.length,
-                  itemBuilder: (context, index) {
-                    final document = documents[index];
-                    return _buildDocumentCard(document);
-                  },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -146,37 +91,29 @@ class _EmployeeDocumentsScreenState extends State<EmployeeDocumentsScreen> {
   }
 
   Widget _buildDocumentCard(Document document) {
-    return SoftCard(
-      child: Container(
-        padding: const EdgeInsets.all(15),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: GlassCard(
+        borderRadius: 20,
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             // Document icon
             Container(
-              width: 40,
-              height: 40,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFE0E5EC),
-                boxShadow: const [
-                  BoxShadow(
-                    color: const Color(0xFFFFFACD),
-                    offset: Offset(-3, -3),
-                    blurRadius: 5,
-                  ),
-                  BoxShadow(
-                    color: Color(0xFFA3B1C6),
-                    offset: Offset(3, 3),
-                    blurRadius: 5,
-                  ),
-                ],
+                color: Colors.white.withOpacity(0.05),
+                border: Border.all(color: Colors.white.withOpacity(0.1)),
               ),
               child: const Icon(
-                Icons.picture_as_pdf,
-                color: Colors.red,
+                Icons.picture_as_pdf_rounded,
+                color: GlassTheme.errorAccent,
+                size: 24,
               ),
             ),
-            const SizedBox(width: 15),
+            const SizedBox(width: 16),
             
             // Document info
             Expanded(
@@ -187,16 +124,16 @@ class _EmployeeDocumentsScreenState extends State<EmployeeDocumentsScreen> {
                     document.name,
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF4A6572),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 4),
                   Text(
                     'Type: ${document.type} | Date: ${document.date}',
                     style: const TextStyle(
                       fontSize: 12,
-                      color: Color(0xFF78909C),
+                      color: GlassTheme.textMuted,
                     ),
                   ),
                 ],
@@ -207,17 +144,18 @@ class _EmployeeDocumentsScreenState extends State<EmployeeDocumentsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: document.status == 'Verified' 
-                    ? Colors.green.withOpacity(0.2) 
-                    : Colors.orange.withOpacity(0.2),
+                color: (document.status == 'Verified' ? GlassTheme.success : GlassTheme.warning).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: (document.status == 'Verified' ? GlassTheme.success : GlassTheme.warning).withOpacity(0.2),
+                ),
               ),
               child: Text(
                 document.status,
                 style: TextStyle(
-                  fontSize: 12,
-                  color: document.status == 'Verified' ? Colors.green : Colors.orange,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 11,
+                  color: document.status == 'Verified' ? GlassTheme.successAccent : GlassTheme.warningAccent,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

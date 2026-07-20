@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hrms/widgets/soft_ui.dart';
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 
 class EmployeeStatusScreen extends StatefulWidget {
   static const String id = 'employee_status_screen';
@@ -31,159 +32,105 @@ class _EmployeeStatusScreenState extends State<EmployeeStatusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFACD),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFFFFFACD),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: const Color(0xFFFFFACD),
-                            offset: Offset(-3, -3),
-                            blurRadius: 5,
-                          ),
-                          BoxShadow(
-                            color: Color(0xFFA3B1C6),
-                            offset: Offset(3, 3),
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    'Employee Status',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFF69B4),
-                    ),
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFFFFACD),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: const Color(0xFFFFFACD),
-                          offset: Offset(-3, -3),
-                          blurRadius: 5,
-                        ),
-                        BoxShadow(
-                          color: Color(0xFFA3B1C6),
-                          offset: Offset(3, 3),
-                          blurRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.edit,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              
-              // Status summary card
-              SoftCard(
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: employeeStatus.currentStatus == 'Active' 
-                                ? Colors.green.withOpacity(0.2) 
-                                : Colors.orange.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            'Status: ${employeeStatus.currentStatus}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: employeeStatus.currentStatus == 'Active' ? Colors.green : Colors.orange,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      employeeStatus.position,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFFFF69B4),
-                      ),
-                    ),
-                    Text(
-                      employeeStatus.department,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFFFF69B4),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              
-              // Status details
-              Expanded(
-                child: SingleChildScrollView(
+      extendBodyBehindAppBar: true,
+      appBar: const GlassAppBar(
+        title: 'Employee Status',
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 8.0),
+            child: Icon(Icons.edit_note_rounded, color: Colors.white),
+          ),
+        ],
+      ),
+      body: GlassBackground(
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                
+                // Status summary card
+                GlassCard(
+                  borderRadius: 24,
+                  padding: const EdgeInsets.all(24),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildStatusSection('Employment Details', [
-                        _buildStatusRow('Employment Type', employeeStatus.employmentType),
-                        _buildStatusRow('Start Date', employeeStatus.startDate),
-                        _buildStatusRow('Probation Period', employeeStatus.probationPeriod),
-                        _buildStatusRow('Notice Period', employeeStatus.noticePeriod),
-                        _buildStatusRow('Contract End Date', employeeStatus.contractEndDate),
-                      ]),
-                      
-                      _buildStatusSection('Job Information', [
-                        _buildStatusRow('Department', employeeStatus.department),
-                        _buildStatusRow('Position', employeeStatus.position),
-                        _buildStatusRow('Manager', employeeStatus.manager),
-                        _buildStatusRow('Location', employeeStatus.location),
-                        _buildStatusRow('Work Schedule', employeeStatus.workSchedule),
-                      ]),
-                      
-                      _buildStatusSection('Review Information', [
-                        _buildStatusRow('Last Review Date', employeeStatus.lastReviewDate),
-                        _buildStatusRow('Next Review Date', employeeStatus.nextReviewDate),
-                      ]),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: (employeeStatus.currentStatus == 'Active' ? GlassTheme.success : GlassTheme.warning).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: (employeeStatus.currentStatus == 'Active' ? GlassTheme.success : GlassTheme.warning).withOpacity(0.3),
+                          ),
+                        ),
+                        child: Text(
+                          'Status: ${employeeStatus.currentStatus}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: employeeStatus.currentStatus == 'Active' ? GlassTheme.successAccent : GlassTheme.warningAccent,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        employeeStatus.position,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        employeeStatus.department,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: GlassTheme.textMuted,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 24),
+                
+                // Status details
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildStatusSection('Employment Details', [
+                          _buildStatusRow('Employment Type', employeeStatus.employmentType),
+                          _buildStatusRow('Start Date', employeeStatus.startDate),
+                          _buildStatusRow('Probation Period', employeeStatus.probationPeriod),
+                          _buildStatusRow('Notice Period', employeeStatus.noticePeriod),
+                          _buildStatusRow('Contract End Date', employeeStatus.contractEndDate),
+                        ]),
+                        
+                        _buildStatusSection('Job Information', [
+                          _buildStatusRow('Department', employeeStatus.department),
+                          _buildStatusRow('Position', employeeStatus.position),
+                          _buildStatusRow('Manager', employeeStatus.manager),
+                          _buildStatusRow('Location', employeeStatus.location),
+                          _buildStatusRow('Work Schedule', employeeStatus.workSchedule),
+                        ]),
+                        
+                        _buildStatusSection('Review Information', [
+                          _buildStatusRow('Last Review Date', employeeStatus.lastReviewDate),
+                          _buildStatusRow('Next Review Date', employeeStatus.nextReviewDate),
+                        ]),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -192,20 +139,25 @@ class _EmployeeStatusScreenState extends State<EmployeeStatusScreen> {
 
   Widget _buildStatusSection(String title, List<Widget> children) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFFF69B4),
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 12),
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                letterSpacing: 0.5,
+              ),
             ),
           ),
-          const SizedBox(height: 10),
-          SoftCard(
+          GlassCard(
+            borderRadius: 20,
+            padding: const EdgeInsets.all(20),
             child: Column(
               children: children,
             ),
@@ -217,27 +169,29 @@ class _EmployeeStatusScreenState extends State<EmployeeStatusScreen> {
 
   Widget _buildStatusRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 120,
+            width: 130,
             child: Text(
               label,
               style: const TextStyle(
                 fontSize: 14,
-                color: Color(0xFFFF69B4),
+                color: GlassTheme.textMuted,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               value,
               style: const TextStyle(
                 fontSize: 14,
-                color: Color(0xFFFF69B4),
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

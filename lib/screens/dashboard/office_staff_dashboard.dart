@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hrms/screens/attendance/mark_attendance_screen.dart';
-import 'package:hrms/widgets/soft_ui.dart';
-import 'package:hrms/screens/attendance/attendance_history_screen.dart';
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 import 'package:hrms/screens/leave/apply_leave_screen.dart';
 import 'package:hrms/screens/employee/employee_profile_screen.dart';
 import 'package:hrms/screens/payroll/monthly_payslip_screen.dart';
@@ -32,222 +32,197 @@ class _OfficeStaffDashboardState extends State<OfficeStaffDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFACD),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFACD),
-        elevation: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/app_logo/logo.jpeg',
-              width: 30,
-              height: 30,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(width: 8),
-            const Text(
-              'E-Smart HR',
-              style: TextStyle(
-                color: Color(0xFFFF69B4),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+      extendBodyBehindAppBar: true,
+      appBar: GlassAppBar(
+        title: 'E-Smart HR',
+        showBackButton: false,
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
             },
-            icon: const Icon(Icons.logout, color: Color(0xFFFF69B4)),
+            icon: const Icon(Icons.logout_rounded, color: Colors.white),
           ),
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                // Welcome section
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFFACD),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0xFFFFFACD),
-                        offset: Offset(-4, -4),
-                        blurRadius: 8,
-                      ),
-                      BoxShadow(
-                        color: Color(0xFFFF69B4),
-                        offset: Offset(4, 4),
-                        blurRadius: 8,
-                      ),
-                    ],
+      body: GlassBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Welcome section
+                  GlassCard(
+                    borderRadius: 24,
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Welcome, John Doe!',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            _buildStatusCard(
+                              'Attendance',
+                              attendanceStatus,
+                              GlassTheme.successAccent,
+                            ),
+                            const SizedBox(width: 12),
+                            _buildStatusCard(
+                              'Shift',
+                              shiftTiming,
+                              GlassTheme.accentGlow,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Column(
+                  const SizedBox(height: 20),
+
+                  // Quick stats
+                  Row(
                     children: [
-                      const Text(
-                        'Welcome, John Doe!',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFFF69B4),
+                      Expanded(
+                        child: _buildStatCard(
+                          'Leave Balance',
+                          '$leaveBalance days',
+                          Icons.calendar_today_rounded,
+                          GlassTheme.warningAccent,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildStatusCard(
-                            'Attendance',
-                            attendanceStatus,
-                            Colors.green,
-                          ),
-                          _buildStatusCard(
-                            'Shift',
-                            shiftTiming,
-                            Color(0xFFFF69B4),
-                          ),
-                        ],
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildStatCard(
+                          'Notifications',
+                          '${notifications.length}',
+                          Icons.notifications_rounded,
+                          Colors.purpleAccent,
+                        ),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 20),
+                  const SizedBox(height: 30),
 
-                // Quick stats
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildStatCard(
-                        'Leave Balance',
-                        '$leaveBalance days',
-                        Icons.calendar_today,
-                        Colors.orange,
+                  // Main navigation grid
+                  const Padding(
+                    padding: EdgeInsets.only(left: 4.0),
+                    child: Text(
+                      'Quick Actions',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
                       ),
                     ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: _buildStatCard(
-                        'Notifications',
-                        '${notifications.length}',
-                        Icons.notifications,
-                        Colors.purple,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Main navigation grid
-                const Text(
-                  'Quick Actions',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFFF69B4),
                   ),
-                ),
-                const SizedBox(height: 15),
+                  const SizedBox(height: 20),
 
-                GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
-                  childAspectRatio: 1.1,
-                  children: [
-                    _buildDashboardCard(
-                      Icons.fingerprint,
-                      'Attendance',
-                      'Mark & View History',
-                      () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MarkAttendanceScreen(),
-                          ),
-                        );
-                      },
-                      Color(0xFFFF69B4),
-                    ),
-                    _buildDashboardCard(
-                      Icons.calendar_today,
-                      'Leave',
-                      'Apply & Track',
-                      () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ApplyLeaveScreen(),
-                          ),
-                        );
-                      },
-                      Colors.orange,
-                    ),
-                    _buildDashboardCard(
-                      Icons.person,
-                      'Profile',
-                      'View Details',
-                      () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const EmployeeProfileScreen(),
-                          ),
-                        );
-                      },
-                      Colors.green,
-                    ),
-                    _buildDashboardCard(
-                      Icons.payments,
-                      'Payroll',
-                      'View Payslips',
-                      () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MonthlyPayslipScreen(),
-                          ),
-                        );
-                      },
-                      Colors.purple,
-                    ),
-                    _buildDashboardCard(
-                      Icons.assessment,
-                      'Performance',
-                      'View KPIs',
-                      () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PerformanceHomeScreen(),
-                          ),
-                        );
-                      },
-                      Colors.red,
-                    ),
-                    _buildDashboardCard(
-                      Icons.policy,
-                      'Policies',
-                      'View Documents',
-                      () {
-                        _showPoliciesDialog();
-                      },
-                      Colors.teal,
-                    ),
-                  ],
-                ),
-              ],
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 1.0,
+                    children: [
+                      _buildDashboardCard(
+                        Icons.fingerprint_rounded,
+                        'Attendance',
+                        'Mark & History',
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MarkAttendanceScreen(),
+                            ),
+                          );
+                        },
+                        GlassTheme.accentGlow,
+                      ),
+                      _buildDashboardCard(
+                        Icons.event_note_rounded,
+                        'Leave',
+                        'Apply & Track',
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ApplyLeaveScreen(),
+                            ),
+                          );
+                        },
+                        GlassTheme.warningAccent,
+                      ),
+                      _buildDashboardCard(
+                        Icons.person_rounded,
+                        'Profile',
+                        'View Details',
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const EmployeeProfileScreen(),
+                            ),
+                          );
+                        },
+                        GlassTheme.successAccent,
+                      ),
+                      _buildDashboardCard(
+                        Icons.payments_rounded,
+                        'Payroll',
+                        'View Payslips',
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MonthlyPayslipScreen(),
+                            ),
+                          );
+                        },
+                        Colors.purpleAccent,
+                      ),
+                      _buildDashboardCard(
+                        Icons.assessment_rounded,
+                        'Performance',
+                        'View KPIs',
+                        () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const PerformanceHomeScreen(),
+                            ),
+                          );
+                        },
+                        GlassTheme.errorAccent,
+                      ),
+                      _buildDashboardCard(
+                        Icons.policy_rounded,
+                        'Policies',
+                        'View Documents',
+                        () {
+                          _showPoliciesDialog();
+                        },
+                        Colors.tealAccent,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),
@@ -258,35 +233,25 @@ class _OfficeStaffDashboardState extends State<OfficeStaffDashboard> {
   Widget _buildStatusCard(String title, String value, Color color) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFFACD),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0xFFFFFACD),
-              offset: Offset(-2, -2),
-              blurRadius: 4,
-            ),
-            BoxShadow(
-              color: Color(0xFFFF69B4),
-              offset: Offset(2, 2),
-              blurRadius: 4,
-            ),
-          ],
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withOpacity(0.1)),
         ),
         child: Column(
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.5)),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 6),
             Text(
               value,
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
                 color: color,
               ),
             ),
@@ -302,21 +267,30 @@ class _OfficeStaffDashboardState extends State<OfficeStaffDashboard> {
     IconData icon,
     Color color,
   ) {
-    return SoftCard(
+    return GlassCard(
+      borderRadius: 20,
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 30),
-          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 12),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFFFF69B4),
-            ),
             textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: GlassTheme.textMuted,
+            ),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 4),
           Text(
             value,
             style: TextStyle(
@@ -337,28 +311,37 @@ class _OfficeStaffDashboardState extends State<OfficeStaffDashboard> {
     VoidCallback onTap,
     Color color,
   ) {
-    return SoftCard(
-      child: GestureDetector(
-        onTap: onTap,
+    return GestureDetector(
+      onTap: onTap,
+      child: GlassCard(
+        borderRadius: 24,
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: color),
-            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+                border: Border.all(color: color.withOpacity(0.2)),
+              ),
+              child: Icon(icon, size: 32, color: color),
+            ),
+            const SizedBox(height: 12),
             Text(
               title,
               style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFFFF69B4),
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
               ),
-              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 4),
             Text(
               subtitle,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
               textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.5)),
             ),
           ],
         ),
@@ -369,36 +352,41 @@ class _OfficeStaffDashboardState extends State<OfficeStaffDashboard> {
   void _showPoliciesDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Company Policies'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildPolicyItem('HR Policy'),
-              _buildPolicyItem('Women-Friendly Workplace Policy'),
-              _buildPolicyItem('Confidentiality & Credential Policy'),
-              _buildPolicyItem('POSH Policy'),
-            ],
+      builder: (context) => GlassCard(
+        borderRadius: 24,
+        padding: const EdgeInsets.all(8),
+        child: AlertDialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: const Text('Company Policies', style: TextStyle(color: Colors.white)),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildPolicyItem('HR Policy'),
+                _buildPolicyItem('Women-Friendly Workplace'),
+                _buildPolicyItem('Confidentiality Policy'),
+                _buildPolicyItem('POSH Policy'),
+              ],
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close', style: TextStyle(color: GlassTheme.accentGlow)),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
       ),
     );
   }
 
   Widget _buildPolicyItem(String policyName) {
     return ListTile(
-      title: Text(policyName),
-      trailing: const Icon(Icons.chevron_right),
+      title: Text(policyName, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+      trailing: const Icon(Icons.chevron_right_rounded, color: Colors.white30),
       onTap: () {
-        // In a real app, this would navigate to the policy details
         Navigator.pop(context);
         _showPolicyDetails(policyName);
       },
@@ -408,17 +396,24 @@ class _OfficeStaffDashboardState extends State<OfficeStaffDashboard> {
   void _showPolicyDetails(String policyName) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(policyName),
-        content: const Text(
-          'This is a sample policy content. In a real app, this would show the actual policy document.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+      builder: (context) => GlassCard(
+        borderRadius: 24,
+        padding: const EdgeInsets.all(8),
+        child: AlertDialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text(policyName, style: const TextStyle(color: Colors.white)),
+          content: const Text(
+            'This is a sample policy content. In a real app, this would show the actual policy document.',
+            style: TextStyle(color: Colors.white70),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK', style: TextStyle(color: GlassTheme.accentGlow)),
+            ),
+          ],
+        ),
       ),
     );
   }

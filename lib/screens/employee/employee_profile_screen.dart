@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hrms/screens/employee/employee_documents_screen.dart';
 import 'package:hrms/screens/employee/employee_status_screen.dart';
 import 'package:hrms/services/employee_service.dart';
-import 'package:hrms/widgets/soft_ui.dart';
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:hrms/screens/dashboards/admin/admin_set_salary_screen.dart';
@@ -30,6 +31,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
   bool isEditing = false;
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
+  
   Future<void> pickAndUploadImage() async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -159,251 +161,223 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
   Widget build(BuildContext context) {
     if (isLoading) {
       return const Scaffold(
-        backgroundColor: Color(0xFFFFFACD),
-        body: Center(child: CircularProgressIndicator()),
+        body: GlassBackground(child: Center(child: CircularProgressIndicator())),
       );
     }
 
     if (error != null) {
       return Scaffold(
-        backgroundColor: const Color(0xFFFFFACD),
-        body: Center(child: Text(error!)),
+        body: GlassBackground(child: Center(child: Text(error!, style: const TextStyle(color: Colors.white)))),
       );
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFACD),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Image.asset(
-                    'assets/images/app_logo/logo.jpeg',
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.contain,
+      extendBodyBehindAppBar: true,
+      appBar: GlassAppBar(
+        title: 'Profile',
+        actions: [
+          if (!widget.isAdminView)
+            isEditing
+                ? Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.check_rounded, color: GlassTheme.successAccent),
+                        onPressed: _saveProfile,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close_rounded, color: GlassTheme.errorAccent),
+                        onPressed: () {
+                          setState(() {
+                            fullNameController.text = name;
+                            phoneController.text = phone;
+                            isEditing = false;
+                          });
+                        },
+                      ),
+                    ],
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.edit_rounded, color: Colors.white),
+                    onPressed: () {
+                      setState(() => isEditing = true);
+                    },
                   ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFFFF69B4),
-                          ),
-                        ),
-                        Text(
-                          role,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFFFF69B4),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (!widget.isAdminView)
-                    isEditing
-                        ? Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.check,
-                                  color: Colors.green,
+        ],
+      ),
+      body: GlassBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              // Profile picture and basic info
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: (!widget.isAdminView && isEditing)
+                          ? pickAndUploadImage
+                          : null,
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 110,
+                            height: 110,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white.withOpacity(0.1), width: 4),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
                                 ),
-                                onPressed: _saveProfile,
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    fullNameController.text = name;
-                                    phoneController.text = phone;
-                                    isEditing = false;
-                                  });
-                                },
-                              ),
-                            ],
-                          )
-                        : IconButton(
-                            icon: const Icon(
-                              Icons.edit,
-                              color: Color(0xFFFF69B4),
-                            ),
-                            onPressed: () {
-                              setState(() => isEditing = true);
-                            },
-                          ),
-                ],
-              ),
-            ),
-
-            // Profile picture and basic info
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: (!widget.isAdminView && isEditing)
-                        ? pickAndUploadImage
-                        : null,
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFFFFFACD),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0xFFFFFACD),
-                            offset: Offset(-3, -3),
-                            blurRadius: 5,
-                          ),
-                          BoxShadow(
-                            color: Color(0xFFFF69B4),
-                            offset: Offset(3, 3),
-                            blurRadius: 5,
-                          ),
-                        ],
-                        image: _selectedImage != null
-                            ? DecorationImage(
-                                image: FileImage(_selectedImage!),
-                                fit: BoxFit.cover,
-                              )
-                            : (employee?['profileImage'] != null
+                              ],
+                              image: _selectedImage != null
                                   ? DecorationImage(
-                                      image: NetworkImage(
-                                        "$baseUrl${employee!['profileImage']}",
-                                      ),
+                                      image: FileImage(_selectedImage!),
                                       fit: BoxFit.cover,
                                     )
-                                  : null),
+                                  : (employee?['profileImage'] != null
+                                        ? DecorationImage(
+                                            image: NetworkImage(
+                                              "$baseUrl${employee!['profileImage']}",
+                                            ),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : null),
+                            ),
+                            child: _selectedImage == null && employee?['profileImage'] == null
+                                ? Icon(
+                                    Icons.person_rounded,
+                                    size: 50,
+                                    color: Colors.white.withOpacity(0.5),
+                                  )
+                                : null,
+                          ),
+                          if (!widget.isAdminView && isEditing)
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: const BoxDecoration(
+                                  color: GlassTheme.accentGlow,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
+                              ),
+                            ),
+                        ],
                       ),
-                      child:
-                          _selectedImage == null &&
-                              employee?['profileImage'] == null
-                          ? const Icon(
-                              Icons.camera_alt,
-                              size: 30,
-                              color: Color(0xFFFF69B4),
-                            )
-                          : null,
                     ),
-                  ),
-                  const SizedBox(height: 15),
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFF69B4),
+                    const SizedBox(height: 16),
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  Text(
-                    role,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFFFF69B4),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Status indicator
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: status == 'Approved'
-                          ? Colors.green.withOpacity(0.2)
-                          : Colors.orange.withOpacity(0.2),
-
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      'Status: $status',
-                      style: TextStyle(
+                    const SizedBox(height: 4),
+                    Text(
+                      role,
+                      style: const TextStyle(
                         fontSize: 14,
-                        color: status == 'Approved'
-                            ? Colors.green
-                            : Colors.orange,
+                        color: GlassTheme.textMuted,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            if (widget.isAdminView) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SoftButton(
-                  text: 'Set Salary',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => AdminSetSalaryScreen(
-                          employeeId: widget.userId!,
-                          employeeName: name,
-                        ),
-                      ),
-                    );
-                  },
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-            ],
 
-            // Tab bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFFACD),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0xFFFFFACD),
-                      offset: Offset(-3, -3),
-                      blurRadius: 5,
-                    ),
-                    BoxShadow(
-                      color: Color(0xFFFF69B4),
-                      offset: Offset(3, 3),
-                      blurRadius: 5,
+              const SizedBox(height: 24),
+
+              // Status indicator
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: (status == 'Approved' ? GlassTheme.success : GlassTheme.warning).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: (status == 'Approved' ? GlassTheme.success : GlassTheme.warning).withOpacity(0.2)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: status == 'Approved' ? GlassTheme.successAccent : GlassTheme.warningAccent,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            status,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: status == 'Approved' ? GlassTheme.successAccent : GlassTheme.warningAccent,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
+              ),
+              
+              const SizedBox(height: 24),
+
+              if (widget.isAdminView) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: GlassButton(
+                    text: 'Set Salary',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => AdminSetSalaryScreen(
+                            employeeId: widget.userId!,
+                            employeeName: name,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // Tab bar
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: TabBar(
                   controller: _tabController,
-                  labelColor: const Color(0xFFFF69B4),
-                  unselectedLabelColor: const Color(0xFFFF69B4),
+                  dividerColor: Colors.transparent,
+                  indicatorColor: Colors.transparent,
+                  labelColor: Colors.white,
+                  unselectedLabelColor: GlassTheme.textMuted,
+                  indicatorSize: TabBarIndicatorSize.tab,
                   indicator: BoxDecoration(
-                    color: const Color(0xFFFF69B4).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                   tabs: const [
                     Tab(text: 'Info'),
                     Tab(text: 'Job'),
@@ -412,31 +386,24 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
                   ],
                 ),
               ),
-            ),
 
-            // Tab content
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    // Personal Information Tab
-                    _buildPersonalInfoTab(),
-
-                    // Job Information Tab
-                    _buildJobInfoTab(),
-
-                    // Documents Tab
-                    _buildDocumentsTab(),
-
-                    // Status Tab
-                    _buildStatusTab(),
-                  ],
+              // Tab content
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildPersonalInfoTab(),
+                      _buildJobInfoTab(),
+                      _buildDocumentsTab(),
+                      _buildStatusTab(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -444,12 +411,12 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
 
   Widget _buildPersonalInfoTab() {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildInfoCard('Personal Information', [
             _buildEditableRow('Full Name', fullNameController),
-
             _buildInfoRow('Email', email),
             _buildEditableRow('Phone', phoneController),
             _buildInfoRow('Department', department),
@@ -461,13 +428,13 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
 
   Widget _buildJobInfoTab() {
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildInfoCard('Job Information', [
             _buildInfoRow('Position', role),
             _buildInfoRow('Department', department),
-
             _buildInfoRow('Hire Date', 'Jan 15, 2020'),
             _buildInfoRow('Employment Type', 'Full-time'),
             _buildInfoRow('Manager', 'Jane Smith'),
@@ -479,32 +446,36 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
 
   Widget _buildEditableRow(String label, TextEditingController controller) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
             width: 100,
             child: Text(
               label,
-              style: const TextStyle(fontSize: 14, color: Color(0xFFFF69B4)),
+              style: const TextStyle(fontSize: 14, color: GlassTheme.textMuted),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: (!widget.isAdminView && isEditing)
                 ? TextField(
                     controller: controller,
-                    decoration: const InputDecoration(
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                    decoration: InputDecoration(
                       isDense: true,
-                      border: UnderlineInputBorder(),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
+                      focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: GlassTheme.accentGlow)),
                     ),
                   )
                 : Text(
                     controller.text,
                     style: const TextStyle(
                       fontSize: 14,
-                      color: Color(0xFFFF69B4),
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
           ),
@@ -518,14 +489,15 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildInfoCard('Documents', [
-          _buildDocumentRow('ID Proof', Icons.picture_as_pdf, 'Verified'),
-          _buildDocumentRow('Certificates', Icons.picture_as_pdf, 'Pending'),
-          _buildDocumentRow('Contract', Icons.picture_as_pdf, 'Verified'),
-          _buildDocumentRow('Tax Documents', Icons.picture_as_pdf, 'Verified'),
+          _buildDocumentRow('ID Proof', Icons.picture_as_pdf_rounded, 'Verified'),
+          _buildDocumentRow('Certificates', Icons.picture_as_pdf_rounded, 'Pending'),
+          _buildDocumentRow('Contract', Icons.picture_as_pdf_rounded, 'Verified'),
+          _buildDocumentRow('Tax Documents', Icons.picture_as_pdf_rounded, 'Verified'),
         ]),
-        const SizedBox(height: 20),
-        SoftButton(
+        const SizedBox(height: 24),
+        GlassButton(
           text: 'View All Documents',
+          isPrimary: false,
           onTap: widget.isAdminView
               ? null
               : () {
@@ -551,9 +523,10 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
           _buildInfoRow('Start Date', 'Jan 15, 2020'),
           _buildInfoRow('Probation Period', 'Completed'),
         ]),
-        const SizedBox(height: 20),
-        SoftButton(
+        const SizedBox(height: 24),
+        GlassButton(
           text: 'View Status Details',
+          isPrimary: false,
           onTap: widget.isAdminView
               ? null
               : () {
@@ -570,41 +543,22 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
   }
 
   Widget _buildInfoCard(String title, List<Widget> children) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFACD),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0xFFFFFACD),
-            offset: Offset(-4, -4),
-            blurRadius: 8,
-          ),
-          BoxShadow(
-            color: Color(0xFFFF69B4),
-            offset: Offset(4, 4),
-            blurRadius: 8,
-          ),
-        ],
-      ),
+    return GlassCard(
+      borderRadius: 20,
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFFF69B4),
-              ),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-            child: Column(children: children),
-          ),
+          const SizedBox(height: 20),
+          Column(children: children),
         ],
       ),
     );
@@ -612,7 +566,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -620,14 +574,14 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
             width: 100,
             child: Text(
               label,
-              style: const TextStyle(fontSize: 14, color: Color(0xFFFF69B4)),
+              style: const TextStyle(fontSize: 14, color: GlassTheme.textMuted),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontSize: 14, color: Color(0xFFFF69B4)),
+              style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500),
             ),
           ),
         ],
@@ -637,30 +591,30 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
 
   Widget _buildDocumentRow(String name, IconData icon, String status) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
-          Icon(icon, color: const Color(0xFFFF69B4)),
-          const SizedBox(width: 10),
+          Icon(icon, color: GlassTheme.errorAccent, size: 20),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               name,
-              style: const TextStyle(fontSize: 14, color: Color(0xFFFF69B4)),
+              style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.w500),
             ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: status == 'Verified'
-                  ? Colors.green.withOpacity(0.2)
-                  : Colors.orange.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(10),
+              color: (status == 'Verified' ? GlassTheme.success : GlassTheme.warning).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: (status == 'Verified' ? GlassTheme.success : GlassTheme.warning).withOpacity(0.2)),
             ),
             child: Text(
               status,
               style: TextStyle(
-                fontSize: 12,
-                color: status == 'Verified' ? Colors.green : Colors.orange,
+                fontSize: 11,
+                color: status == 'Verified' ? GlassTheme.successAccent : GlassTheme.warningAccent,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

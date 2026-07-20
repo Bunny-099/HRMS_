@@ -4,8 +4,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:hrms/models/payslip_model.dart';
 import 'package:hrms/services/api_services.dart';
-import 'package:hrms/widgets/soft_ui.dart';
-import 'package:hrms/theme/soft_theme.dart';
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 
 class PayslipPdfDownloadScreen extends StatefulWidget {
   static const String id = 'payslip_pdf_download_screen';
@@ -28,8 +28,6 @@ class _PayslipPdfDownloadScreenState
 
   bool _downloading = false;
   String? _error;
-
-  // ================= DOWNLOAD LOGIC =================
 
   Future<void> _downloadPayslipPdf() async {
     try {
@@ -60,76 +58,47 @@ class _PayslipPdfDownloadScreenState
     }
   }
 
-  // ================= UI =================
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: SoftTheme.backgroundColor,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 30),
+      extendBodyBehindAppBar: true,
+      appBar: const GlassAppBar(title: 'Payslip PDF'),
+      body: GlassBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
 
-              if (_error != null) _buildError(),
+                if (_error != null) _buildError(),
 
-              _buildPayslipInfo(),
-              const SizedBox(height: 30),
+                _buildPayslipInfo(),
+                const SizedBox(height: 24),
 
-              _buildDownloadSection(),
-            ],
+                _buildDownloadSection(),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  // ================= HEADER =================
-
-  Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: SoftCard(
-            child: const SizedBox(
-              width: 40,
-              height: 40,
-              child: Icon(Icons.arrow_back),
-            ),
-          ),
-        ),
-        Text(
-          'Payslip PDF',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: SoftTheme.textColor,
-          ),
-        ),
-        const SizedBox(width: 40),
-      ],
-    );
-  }
-
-  // ================= ERROR =================
-
   Widget _buildError() {
-    return SoftCard(
-      child: Padding(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: GlassCard(
+        borderRadius: 16,
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            const Icon(Icons.error, color: Colors.red),
+            const Icon(Icons.error_outline_rounded, color: GlassTheme.errorAccent),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 _error!,
-                style: const TextStyle(color: Colors.red),
+                style: const TextStyle(color: GlassTheme.errorAccent, fontSize: 13),
               ),
             ),
           ],
@@ -138,18 +107,21 @@ class _PayslipPdfDownloadScreenState
     );
   }
 
-  // ================= PAYSLIP INFO =================
-
   Widget _buildPayslipInfo() {
     final p = widget.payslip;
 
-    return SoftCard(
+    return GlassCard(
+      borderRadius: 24,
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _infoRow('Employee', p.employeeName),
-          const Divider(),
+          const SizedBox(height: 12),
+          Divider(color: Colors.white.withOpacity(0.05)),
+          const SizedBox(height: 12),
           _infoRow('Month', '${p.month} ${p.year}'),
+          const SizedBox(height: 12),
           _infoRow(
             'Net Salary',
             '₹${p.netSalary.toStringAsFixed(0)}',
@@ -161,75 +133,69 @@ class _PayslipPdfDownloadScreenState
   }
 
   Widget _infoRow(String label, String value, {bool isBold = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: SoftTheme.hintColor,
-              fontSize: 14,
-            ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: GlassTheme.textMuted,
+            fontSize: 14,
           ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              color: SoftTheme.textColor,
-            ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+            color: isBold ? GlassTheme.successAccent : Colors.white,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  // ================= DOWNLOAD =================
-
   Widget _buildDownloadSection() {
-    return SoftCard(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const Icon(
-              Icons.picture_as_pdf,
-              size: 40,
-              color: Colors.red,
+    return GlassCard(
+      borderRadius: 24,
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: GlassTheme.errorAccent.withOpacity(0.1),
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: 15),
-            Text(
-              'Download Payslip PDF',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: SoftTheme.textColor,
-              ),
+            child: const Icon(
+              Icons.picture_as_pdf_rounded,
+              size: 48,
+              color: GlassTheme.errorAccent,
             ),
-            const SizedBox(height: 15),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _downloading ? null : _downloadPayslipPdf,
-                icon: _downloading
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Icon(Icons.download),
-                label: Text(
-                  _downloading ? 'Downloading...' : 'Download PDF',
-                ),
-              ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Download Payslip PDF',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Save a secure copy to your device',
+            style: TextStyle(
+              fontSize: 13,
+              color: GlassTheme.textMuted,
+            ),
+          ),
+          const SizedBox(height: 32),
+          GlassButton(
+            text: _downloading ? 'Downloading...' : 'Download PDF',
+            onTap: _downloading ? null : _downloadPayslipPdf,
+          ),
+        ],
       ),
     );
   }

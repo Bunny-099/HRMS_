@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hrms/screens/leave/my_leaves_screen.dart';
-
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 import 'my_profile_screen.dart';
 import 'my_documents_screen.dart';
 import 'my_payslips_screen.dart';
@@ -18,165 +19,106 @@ class _SelfServiceHomeScreenState extends State<SelfServiceHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFACD),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset(
-                    'assets/images/app_logo/logo.jpeg',
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.contain,
+      extendBodyBehindAppBar: true,
+      appBar: const GlassAppBar(
+        title: 'Self Service',
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: Icon(Icons.person_pin_rounded, color: Colors.white),
+          ),
+        ],
+      ),
+      body: GlassBackground(
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                // Quick Actions Title
+                const Text(
+                  'Quick Actions',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
                   ),
-                  const SizedBox(width: 15),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFFACD),
-                        shape: BoxShape.circle,
-                        boxShadow: const [
-                          BoxShadow(
-                            color: const Color(0xFFFFFACD),
-                            offset: Offset(-4, -4),
-                            blurRadius: 8,
-                          ),
-                          BoxShadow(
-                            color: const Color(0xFFFF69B4),
-                            offset: Offset(4, 4),
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                        color: Color(0xFFFF69B4),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    'Self Service',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFF69B4),
-                    ),
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFFACD),
-                      shape: BoxShape.circle,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: const Color(0xFFFFFACD),
-                          offset: Offset(-4, -4),
-                          blurRadius: 8,
-                        ),
-                        BoxShadow(
-                          color: const Color(0xFFFF69B4),
-                          offset: Offset(4, 4),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      size: 20,
-                      color: Color(0xFFFF69B4),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              
-              // Quick Actions
-              Text(
-                'Quick Actions',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFFFF69B4),
                 ),
-              ),
-              const SizedBox(height: 20),
-              
-              // Action buttons grid
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                  childAspectRatio: 1.0,
-                  children: [
-                    _buildActionCard(
-                      icon: Icons.person,
-                      title: 'My Profile',
-                      subtitle: 'View personal details',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MyProfileScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildActionCard(
-                      icon: Icons.picture_as_pdf,
-                      title: 'My Documents',
-                      subtitle: 'View & download',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MyDocumentsScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildActionCard(
-                      icon: Icons.payments,
-                      title: 'My Payslips',
-                      subtitle: 'View salary details',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const MyPayslipsScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _buildActionCard(
-                      icon: Icons.work,
-                      title: 'My Leaves',
-                      subtitle: 'Track requests',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MyLeavesScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                const SizedBox(height: 20),
+                
+                // Action buttons grid
+                Expanded(
+                  child: GridView.count(
+                    physics: const BouncingScrollPhysics(),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 1.0,
+                    children: [
+                      _buildActionCard(
+                        icon: Icons.person_rounded,
+                        title: 'My Profile',
+                        subtitle: 'Personal details',
+                        color: Colors.blueAccent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MyProfileScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildActionCard(
+                        icon: Icons.folder_shared_rounded,
+                        title: 'My Documents',
+                        subtitle: 'View & download',
+                        color: Colors.purpleAccent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MyDocumentsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildActionCard(
+                        icon: Icons.payments_rounded,
+                        title: 'My Payslips',
+                        subtitle: 'Salary history',
+                        color: GlassTheme.successAccent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MyPayslipsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildActionCard(
+                        icon: Icons.event_available_rounded,
+                        title: 'My Leaves',
+                        subtitle: 'Track requests',
+                        color: Colors.orangeAccent,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MyLeavesScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -188,57 +130,50 @@ class _SelfServiceHomeScreenState extends State<SelfServiceHomeScreen> {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    required Color color,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFACD),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: const Color(0xFFFFFACD),
-            offset: Offset(-6, -6),
-            blurRadius: 10,
-          ),
-          BoxShadow(
-            color: const Color(0xFFFF69B4),
-            offset: Offset(6, 6),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
+    return GestureDetector(
+      onTap: onTap,
+      child: GlassCard(
+        borderRadius: 24,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.15),
+                shape: BoxShape.circle,
+                border: Border.all(color: color.withOpacity(0.3)),
+              ),
+              child: Icon(
                 icon,
-                size: 40,
-                color: const Color(0xFFFF69B4),
+                size: 32,
+                color: color,
               ),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFFFF69B4),
-                ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
               ),
-              const SizedBox(height: 5),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFFFF69B4),
-                ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.white.withOpacity(0.5),
+                fontWeight: FontWeight.w400,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

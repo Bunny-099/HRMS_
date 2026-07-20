@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 
 
 class FeedbackRatingScreen extends StatefulWidget {
@@ -58,149 +60,75 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFACD),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
+      extendBodyBehindAppBar: true,
+      appBar: const GlassAppBar(
+        title: 'Feedback & Rating',
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 8.0),
+            child: Icon(Icons.filter_list, color: Colors.white),
+          ),
+        ],
+      ),
+      body: GlassBackground(
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                // Average rating card
+                GlassCard(
+                  padding: const EdgeInsets.all(24),
+                  borderRadius: 24,
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Average Rating',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: GlassTheme.textMuted,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        '4.4',
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(5, (index) {
+                          return Icon(
+                            index < 4 ? Icons.star_rounded : Icons.star_half_rounded,
+                            color: Colors.amber,
+                            size: 28,
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 30),
+
+                // Feedbacks list
+                Expanded(
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: feedbacks.length,
+                    itemBuilder: (context, index) {
+                      final feedback = feedbacks[index];
+                      return _buildFeedbackCard(feedback);
                     },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFFACD),
-                        shape: BoxShape.circle,
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0xFFFFFACD),
-                            offset: Offset(-4, -4),
-                            blurRadius: 8,
-                          ),
-                          BoxShadow(
-                            color: Color(0xFFFF69B4),
-                            offset: Offset(4, 4),
-                            blurRadius: 8,
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                        color: Color(0xFFFF69B4),
-                      ),
-                    ),
                   ),
-                  Text(
-                    'Feedback & Rating',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFF69B4),
-                    ),
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFFACD),
-                      shape: BoxShape.circle,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0xFFFFFACD),
-                          offset: Offset(-4, -4),
-                          blurRadius: 8,
-                        ),
-                        BoxShadow(
-                          color: Color(0xFFFF69B4),
-                          offset: Offset(4, 4),
-                          blurRadius: 8,
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Icon(
-                      Icons.filter_list,
-                      size: 20,
-                      color: Color(0xFFFF69B4),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              
-              // Average rating card
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFFACD),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0xFFFFFACD),
-                      offset: Offset(-6, -6),
-                      blurRadius: 10,
-                    ),
-                    BoxShadow(
-                      color: Color(0xFFFF69B4),
-                      offset: Offset(6, 6),
-                      blurRadius: 10,
-                    ),
-                  ],
                 ),
-                child: Column(
-                  children: [
-                    Text(
-                      'Average Rating',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFFFF69B4),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      '4.4',
-                      style: const TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFFF69B4),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(5, (index) {
-                        return Icon(
-                          index < 4 ? Icons.star : Icons.star_border,
-                          color: Colors.orange,
-                        );
-                      }),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 30),
-              
-              // Feedbacks list
-              Expanded(
-                child: ListView.builder(
-                  itemCount: feedbacks.length,
-                  itemBuilder: (context, index) {
-                    final feedback = feedbacks[index];
-                    return _buildFeedbackCard(feedback);
-                  },
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -209,25 +137,10 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
 
   Widget _buildFeedbackCard(Feedback feedback) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFACD),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0xFFFFFACD),
-            offset: Offset(-6, -6),
-            blurRadius: 10,
-          ),
-          BoxShadow(
-            color: Color(0xFFFF69B4),
-            offset: Offset(6, 6),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.only(bottom: 16),
+      child: GlassCard(
+        padding: const EdgeInsets.all(20),
+        borderRadius: 20,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -241,96 +154,103 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
                       Text(
                         feedback.reviewer,
                         style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFFF69B4),
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         feedback.reviewerRole,
                         style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFFFF69B4),
+                          fontSize: 13,
+                          color: GlassTheme.textMuted,
                         ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF69B4).withValues(alpha: 0.2),
+                    color: GlassTheme.accentGlow.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: GlassTheme.accentGlow.withOpacity(0.2)),
                   ),
                   child: Text(
                     feedback.type,
                     style: const TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFFFF69B4),
-                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                      color: GlassTheme.accentGlow,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             Row(
               children: [
-                Icon(
-                  Icons.category,
-                  size: 14,
-                  color: const Color(0xFFFF69B4),
+                const Icon(
+                  Icons.category_outlined,
+                  size: 16,
+                  color: GlassTheme.textMuted,
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 6),
                 Text(
                   feedback.category,
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Color(0xFFFF69B4),
+                    color: GlassTheme.textMuted,
                   ),
                 ),
-                const SizedBox(width: 15),
-                Icon(
-                  Icons.star,
-                  size: 14,
-                  color: Colors.orange,
+                const Spacer(),
+                const Icon(
+                  Icons.star_rounded,
+                  size: 16,
+                  color: Colors.amber,
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 4),
                 Text(
                   feedback.rating.toString(),
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Color(0xFFFF69B4),
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 15),
-                Icon(
-                  Icons.access_time,
+                const Spacer(),
+                const Icon(
+                  Icons.calendar_today_rounded,
                   size: 14,
-                  color: const Color(0xFFFF69B4),
+                  color: GlassTheme.textMuted,
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 6),
                 Text(
                   feedback.date,
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Color(0xFFFF69B4),
+                    color: GlassTheme.textMuted,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.all(10),
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFFACD),
-                borderRadius: BorderRadius.circular(8),
+                color: Colors.white.withOpacity(0.03),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.05)),
               ),
               child: Text(
                 feedback.feedback,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFFFF69B4),
+                  color: Colors.white.withOpacity(0.8),
+                  height: 1.4,
+                  fontStyle: FontStyle.italic,
                 ),
               ),
             ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hrms/theme/glass_theme.dart';
+import 'package:hrms/widgets/glass_ui.dart';
 
 
 class GoalsKpiScreen extends StatefulWidget {
@@ -54,124 +56,64 @@ class _GoalsKpiScreenState extends State<GoalsKpiScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFACD),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFFACD),
-                        shape: BoxShape.circle,
-                        boxShadow: const [
-                          BoxShadow(
-                            color: const Color(0xFFFFFACD),
-                            offset: Offset(-4, -4),
-                            blurRadius: 8,
-                          ),
-                          BoxShadow(
-                            color: const Color(0xFFFF69B4),
-                            offset: Offset(4, 4),
-                            blurRadius: 8,
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                        color: const Color(0xFFFF69B4),
+      extendBodyBehindAppBar: true,
+      appBar: const GlassAppBar(
+        title: 'Goals & KPI',
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 8.0),
+            child: Icon(Icons.add, color: Colors.white),
+          ),
+        ],
+      ),
+      body: GlassBackground(
+        child: SafeArea(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                // Summary cards
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildSummaryCard(
+                        title: 'Active Goals',
+                        value: '3',
+                        color: GlassTheme.accentGlow,
                       ),
                     ),
-                  ),
-                  Text(
-                    'Goals & KPI',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFFFF69B4),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: _buildSummaryCard(
+                        title: 'Completed',
+                        value: '1',
+                        color: GlassTheme.success,
+                      ),
                     ),
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFFACD),
-                      shape: BoxShape.circle,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: const Color(0xFFFFFACD),
-                          offset: Offset(-4, -4),
-                          blurRadius: 8,
-                        ),
-                        BoxShadow(
-                          color: const Color(0xFFFF69B4),
-                          offset: Offset(4, 4),
-                          blurRadius: 8,
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Icon(
-                      Icons.add,
-                      size: 20,
-                      color: const Color(0xFFFF69B4),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              
-              // Summary cards
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildSummaryCard(
-                      title: 'Active Goals',
-                      value: '3',
-                      color: const Color(0xFFFF69B4),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: _buildSummaryCard(
-                      title: 'Completed',
-                      value: '1',
-                      color: Colors.green,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              _buildSummaryCard(
-                title: 'Avg. Progress',
-                value: '91%',
-                color: Colors.orange,
-              ),
-              const SizedBox(height: 30),
-              
-              // Goals list
-              Expanded(
-                child: ListView.builder(
-                  itemCount: goals.length,
-                  itemBuilder: (context, index) {
-                    final goal = goals[index];
-                    return _buildGoalCard(goal);
-                  },
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 15),
+                _buildSummaryCard(
+                  title: 'Avg. Progress',
+                  value: '91%',
+                  color: GlassTheme.warning,
+                ),
+                const SizedBox(height: 30),
+                
+                // Goals list
+                Expanded(
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: goals.length,
+                    itemBuilder: (context, index) {
+                      final goal = goals[index];
+                      return _buildGoalCard(goal);
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -179,30 +121,15 @@ class _GoalsKpiScreenState extends State<GoalsKpiScreen> {
   }
 
   Widget _buildSummaryCard({required String title, required String value, required Color color}) {
-    return Container(
+    return GlassCard(
       padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFACD),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: const Color(0xFFFFFACD),
-            offset: Offset(-6, -6),
-            blurRadius: 10,
-          ),
-          BoxShadow(
-            color: const Color(0xFFFF69B4),
-            offset: Offset(6, 6),
-            blurRadius: 10,
-          ),
-        ],
-      ),
+      borderRadius: 16,
       child: Column(
         children: [
           Text(
             value,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -211,8 +138,9 @@ class _GoalsKpiScreenState extends State<GoalsKpiScreen> {
           Text(
             title,
             style: const TextStyle(
-              fontSize: 12,
-              color: const Color(0xFFFF69B4),
+              fontSize: 13,
+              color: GlassTheme.textMuted,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -222,30 +150,15 @@ class _GoalsKpiScreenState extends State<GoalsKpiScreen> {
 
   Widget _buildGoalCard(Goal goal) {
     double progress = (goal.current / goal.target) * 100;
-    Color progressColor = Colors.green;
-    if (progress < 50) progressColor = Colors.red;
-    else if (progress < 80) progressColor = Colors.orange;
+    Color progressColor = GlassTheme.success;
+    if (progress < 50) progressColor = GlassTheme.error;
+    else if (progress < 80) progressColor = GlassTheme.warning;
     
     return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFACD),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: const Color(0xFFFFFACD),
-            offset: Offset(-6, -6),
-            blurRadius: 10,
-          ),
-          BoxShadow(
-            color: const Color(0xFFFF69B4),
-            offset: Offset(6, 6),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.only(bottom: 16),
+      child: GlassCard(
+        borderRadius: 20,
+        padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -256,78 +169,82 @@ class _GoalsKpiScreenState extends State<GoalsKpiScreen> {
                   child: Text(
                     goal.title,
                     style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFFFF69B4),
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
                     ),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: goal.status == 'Completed' 
-                        ? Colors.green.withValues(alpha: 0.2) 
-                        : Colors.orange.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10),
+                        ? GlassTheme.success.withOpacity(0.15) 
+                        : GlassTheme.warning.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: (goal.status == 'Completed' ? GlassTheme.success : GlassTheme.warning).withOpacity(0.3),
+                    ),
                   ),
                   child: Text(
                     goal.status,
                     style: TextStyle(
-                      fontSize: 12,
-                      color: goal.status == 'Completed' ? Colors.green : Colors.orange,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                      color: goal.status == 'Completed' ? GlassTheme.successAccent : GlassTheme.warningAccent,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             Text(
               goal.description,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: const Color(0xFFFF69B4),
+                color: Colors.white.withOpacity(0.7),
+                height: 1.4,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             Row(
               children: [
-                Icon(
-                  Icons.flag,
-                  size: 14,
-                  color: const Color(0xFFFF69B4),
+                const Icon(
+                  Icons.flag_rounded,
+                  size: 16,
+                  color: GlassTheme.textMuted,
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 6),
                 Text(
                   'Target: ${goal.target}%',
                   style: const TextStyle(
                     fontSize: 12,
-                    color: const Color(0xFFFF69B4),
+                    color: GlassTheme.textMuted,
                   ),
                 ),
-                const SizedBox(width: 15),
-                Icon(
-                  Icons.access_time,
-                  size: 14,
-                  color: const Color(0xFFFF69B4),
+                const SizedBox(width: 20),
+                const Icon(
+                  Icons.access_time_rounded,
+                  size: 16,
+                  color: GlassTheme.textMuted,
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 6),
                 Text(
                   'Deadline: ${goal.deadline}',
                   style: const TextStyle(
                     fontSize: 12,
-                    color: const Color(0xFFFF69B4),
+                    color: GlassTheme.textMuted,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 16),
             // Progress bar
             Container(
-              height: 8,
+              height: 10,
               decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(4),
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(5),
               ),
               child: LayoutBuilder(
                 builder: (context, constraints) {
@@ -336,8 +253,17 @@ class _GoalsKpiScreenState extends State<GoalsKpiScreen> {
                       Container(
                         width: constraints.maxWidth * (goal.current / goal.target),
                         decoration: BoxDecoration(
-                          color: progressColor,
-                          borderRadius: BorderRadius.circular(4),
+                          gradient: LinearGradient(
+                            colors: [progressColor, progressColor.withOpacity(0.7)],
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: progressColor.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -345,23 +271,24 @@ class _GoalsKpiScreenState extends State<GoalsKpiScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   '${goal.current}%',
                   style: const TextStyle(
-                    fontSize: 12,
-                    color: const Color(0xFFFF69B4),
+                    fontSize: 13,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
                   '${(goal.current / goal.target * 100).toStringAsFixed(1)}% Complete',
                   style: TextStyle(
-                    fontSize: 12,
-                    color: progressColor,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
+                    color: progressColor.withOpacity(0.9),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],

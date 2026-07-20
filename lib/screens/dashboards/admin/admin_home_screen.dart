@@ -81,15 +81,19 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
 
           SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+            child: RefreshIndicator(
+              onRefresh: _loadStats,
+              color: const Color(0xFF3B82F6),
+              backgroundColor: const Color(0xFF1E293B),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
 
-                    // 🟢 4. FROSTED GLASS WELCOME SECTION (Ultra-Minimal)
+                    // 4. FROSTED GLASS WELCOME SECTION
                     const SizedBox(height: 12),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(20),
@@ -99,20 +103,18 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.02), // Extremely sheer
+                            color: Colors.white.withOpacity(0.02),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.05), // Thinner border
+                              color: Colors.white.withOpacity(0.05),
                               width: 0.5,
                             ),
-                            // Removed BoxShadow for flat aesthetics
                           ),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start, // Left aligned for sleekness
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 children: [
-                                  // Minimal Avatar
                                   Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
@@ -158,7 +160,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
                     const SizedBox(height: 40),
 
-                    // Section Title
                     Text(
                       'Management Tools',
                       style: TextStyle(
@@ -171,7 +172,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // 🟢 5. GLASS FEATURE GRID (Routing Logic 100% PRESERVED)
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -179,7 +179,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                         crossAxisCount: 2,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        childAspectRatio: 1.2, // Slightly wider for minimalism
+                        childAspectRatio: 1.2,
                       ),
                       itemCount: 4,
                       itemBuilder: (context, index) {
@@ -187,22 +187,22 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           {
                             'icon': Icons.people_alt_outlined,
                             'title': 'Employees',
-                            'color': const Color(0xFF8B5CF6), // Violet
+                            'color': const Color(0xFF8B5CF6),
                           },
                           {
                             'icon': Icons.calendar_month_outlined,
                             'title': 'Holidays',
-                            'color': const Color(0xFF10B981), // Emerald
+                            'color': const Color(0xFF10B981),
                           },
                           {
                             'icon': Icons.access_time_rounded,
                             'title': 'Attendance',
-                            'color': const Color(0xFF3B82F6), // Blue
+                            'color': const Color(0xFF3B82F6),
                           },
                           {
                             'icon': Icons.receipt_long_outlined,
                             'title': 'Payroll',
-                            'color': const Color(0xFFF59E0B), // Amber
+                            'color': const Color(0xFFF59E0B),
                           },
                         ];
 
@@ -221,7 +221,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AttendanceHistoryScreen()));
                                 break;
                               case 3:
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const EmployeeListScreen())); // Preserved existing route
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const EmployeeListScreen()));
                                 break;
                             }
                           },
@@ -236,7 +236,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
                     const SizedBox(height: 40),
 
-                    // Quick Stats Section Title
                     Text(
                       'Overview',
                       style: TextStyle(
@@ -248,14 +247,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // 🟢 6. FROSTED GLASS STAT PILLS (Ultra-Minimal)
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 1.8, // Flatter pills
+                      childAspectRatio: 1.8,
                       children: [
                         _buildMinimalStatCard(
                           title: 'Present',
@@ -285,6 +283,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ),
             ),
           ),
+        ),
         ],
       ),
     );

@@ -1,9 +1,9 @@
+import 'dart:ui'; // 🟢 ADDED: Required for Glassmorphic ImageFilter.blur
 import 'package:flutter/material.dart';
-import 'package:hrms/widgets/soft_ui.dart';
 
 class HolidayCalendarScreen extends StatefulWidget {
   static const String id = 'holiday_calendar_screen';
-  
+
   const HolidayCalendarScreen({super.key});
 
   @override
@@ -11,7 +11,7 @@ class HolidayCalendarScreen extends StatefulWidget {
 }
 
 class _HolidayCalendarScreenState extends State<HolidayCalendarScreen> {
-  // Sample holiday data
+  // 🔐 DATA PRESERVED 100%
   List<Holiday> holidays = [
     Holiday(
       id: 1,
@@ -94,221 +94,287 @@ class _HolidayCalendarScreenState extends State<HolidayCalendarScreen> {
     }
   }
 
+  // 🟢 Sleek Dark Glassmorphism Color Tokens (Synced across app)
+  final Color bgDarkStart = const Color(0xFF090D16);
+  final Color bgDarkEnd = const Color(0xFF111827);
+  final Color textWhite = Colors.white;
+  final Color textMuted = const Color(0xFF94A3B8);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFACD),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      backgroundColor: bgDarkStart,
+      body: Stack(
+        children: [
+          // 1. Deep Midnight Ambient Gradient
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [bgDarkStart, bgDarkEnd, const Color(0xFF0A0F1D)],
+              ),
+            ),
+          ),
+
+          // 🟢 2. Subtle Ambient Glow Orbs for Glass Effect
+          Positioned(
+            top: -100,
+            right: -50,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF3B82F6).withOpacity(0.08), // Blue glow
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 50,
+            left: -100,
+            child: Container(
+              width: 350,
+              height: 350,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF10B981).withOpacity(0.06), // Emerald glow
+              ),
+            ),
+          ),
+
+          // 3. Main Content
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFFACD),
-                        shape: BoxShape.circle,
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0xFFFFFACD),
-                            offset: Offset(-4, -4),
-                            blurRadius: 8,
-                          ),
-                          BoxShadow(
-                            color: Color(0xFFFF69B4),
-                            offset: Offset(4, 4),
-                            blurRadius: 8,
-                          ),
-                        ],
+                  const SizedBox(height: 10),
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Back Button
+                      _buildGlassIconButton(
+                        icon: Icons.arrow_back_ios_new_rounded,
+                        onTap: () => Navigator.pop(context),
                       ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                        color: Color(0xFFFF69B4),
+
+                      // Title
+                      const Text(
+                        'Holiday Calendar',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                        ),
                       ),
-                    ),
+
+                      // Calendar Icon
+                      _buildGlassIconButton(
+                        icon: Icons.calendar_month_rounded,
+                        onTap: () {},
+                        accentColor: const Color(0xFF10B981),
+                      ),
+                    ],
                   ),
-                  Text(
-                    'Holiday Calendar',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFF69B4),
-                    ),
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFFACD),
-                      shape: BoxShape.circle,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0xFFFFFACD),
-                          offset: Offset(-4, -4),
-                          blurRadius: 8,
-                        ),
-                        BoxShadow(
-                          color: Color(0xFFFF69B4),
-                          offset: Offset(4, 4),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.calendar_today,
-                      size: 20,
-                      color: Color(0xFFFF69B4),
+                  const SizedBox(height: 32),
+
+                  // Holiday list
+                  Expanded(
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: holidays.length,
+                      itemBuilder: (context, index) {
+                        final holiday = holidays[index];
+                        return _buildHolidayCard(holiday);
+                      },
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
-              
-              // Holiday list
-              Expanded(
-                child: ListView.builder(
-                  itemCount: holidays.length,
-                  itemBuilder: (context, index) {
-                    final holiday = holidays[index];
-                    return _buildHolidayCard(holiday);
-                  },
-                ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 🟢 Ultra-Minimal Frosted Glass Holiday Card
+  Widget _buildHolidayCard(Holiday holiday) {
+    String day = _getDayName(holiday.date.weekday);
+    String month = _getMonthName(holiday.date.month);
+    String dayNumber = holiday.date.day.toString();
+
+    // Sleek Dark Theme Accent Colors based on logic
+    Color typeColor = const Color(0xFF3B82F6); // Default Blue
+    if (holiday.type == 'National Holiday') {
+      typeColor = const Color(0xFF10B981); // Emerald Green
+    } else if (holiday.type == 'Religious Holiday') {
+      typeColor = const Color(0xFF8B5CF6); // Royal Violet
+    } else if (holiday.type == 'Festival') {
+      typeColor = const Color(0xFFF59E0B); // Vibrant Amber
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.08),
+                width: 1,
               ),
-            ],
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                // 🟢 Sleek Date Badge / Calendar Leaf
+                Container(
+                  width: 60,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: typeColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: typeColor.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        day.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: typeColor.withOpacity(0.8),
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        dayNumber,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: typeColor,
+                          fontWeight: FontWeight.w800,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        month.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: typeColor.withOpacity(0.8),
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+
+                // 🟢 Holiday Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        holiday.name,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${holiday.date.day} ${month}, ${holiday.date.year}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white.withOpacity(0.6),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Holiday Type Badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: typeColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: typeColor.withOpacity(0.2)),
+                        ),
+                        child: Text(
+                          holiday.type,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: typeColor,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHolidayCard(Holiday holiday) {
-    String day = _getDayName(holiday.date.weekday);
-    String month = _getMonthName(holiday.date.month);
-    String dayNumber = holiday.date.day.toString();
-
-    Color typeColor = Colors.blue;
-    if (holiday.type == 'National Holiday') typeColor = Colors.green;
-    else if (holiday.type == 'Religious Holiday') typeColor = Colors.purple;
-    else if (holiday.type == 'Festival') typeColor = Colors.orange;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFACD),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0xFFFFFACD),
-            offset: Offset(-4, -4),
-            blurRadius: 8,
-          ),
-          BoxShadow(
-            color: Color(0xFFFF69B4),
-            offset: Offset(4, 4),
-            blurRadius: 8,
-          ),
-        ],
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(15),
-        child: Row(
-          children: [
-            // Date circle
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: typeColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    day,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: typeColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    dayNumber,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: typeColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    month,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: typeColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+  // Helper Widget for sleek glass buttons in Header
+  Widget _buildGlassIconButton({required IconData icon, required VoidCallback onTap, Color? accentColor}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: accentColor != null ? accentColor.withOpacity(0.15) : Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: accentColor != null ? accentColor.withOpacity(0.3) : Colors.white.withOpacity(0.1),
               ),
             ),
-            const SizedBox(width: 15),
-            // Holiday info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    holiday.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFF69B4),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    '${holiday.date.day}/${holiday.date.month}/${holiday.date.year}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFFFF69B4),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: typeColor.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      holiday.type,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: typeColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            child: Icon(
+              icon,
+              size: 20,
+              color: accentColor ?? Colors.white,
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
+// 🔐 CLASS PRESERVED 100%
 class Holiday {
   final int id;
   final String name;

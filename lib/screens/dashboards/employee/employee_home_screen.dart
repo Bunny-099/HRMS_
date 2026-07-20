@@ -33,12 +33,14 @@ class _EmployeeHomeScreenState extends State<EmployeeHomeScreen> {
   Future<void> _loadEmployeeProfile() async {
     try {
       final data = await EmployeeService.getMyProfile();
+      if (!mounted) return;
       setState(() {
         profile = data;
         loading = false;
       });
     } catch (e) {
       debugPrint('PROFILE ERROR: $e');
+      if (!mounted) return;
       setState(() => loading = false);
     }
   }
@@ -46,6 +48,7 @@ class _EmployeeHomeScreenState extends State<EmployeeHomeScreen> {
   Future<void> _loadDashboardStatus() async {
     try {
       final data = await EmployeeService.getDashboardStatus();
+      if (!mounted) return;
       setState(() {
         shiftTime = data['shiftTime'] ?? '--';
         todayStatus = data['todayStatus'] ?? '--';
@@ -55,7 +58,8 @@ class _EmployeeHomeScreenState extends State<EmployeeHomeScreen> {
       });
     } catch (e) {
       debugPrint('DASHBOARD STATUS ERROR: $e');
-      dashboardLoading = false;
+      if (!mounted) return;
+      setState(() => dashboardLoading = false);
     }
   }
 
@@ -204,11 +208,25 @@ class _EmployeeHomeScreenState extends State<EmployeeHomeScreen> {
           decoration: BoxDecoration(color: Colors.white.withOpacity(0.03), borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.white.withOpacity(0.08))),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, size: 20, color: color),
-              const SizedBox(height: 6),
-              Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white), textAlign: TextAlign.center, maxLines: 1),
-              Text(title, style: TextStyle(fontSize: 10, color: textMuted)),
+              const SizedBox(height: 4),
+              Flexible(
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Text(title,
+                  style: TextStyle(fontSize: 10, color: textMuted),
+                  textAlign: TextAlign.center),
             ],
           ),
         ),

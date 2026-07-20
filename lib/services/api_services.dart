@@ -34,7 +34,7 @@ class ApiService {
     );
   }
   Future<List<dynamic>> fetchEmployees() async {
-  final response = await get('/admin/employees');
+  final response = await get('/employees');
 
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body);

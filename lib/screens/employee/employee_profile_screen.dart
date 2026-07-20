@@ -38,6 +38,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
 
     if (picked == null) return;
 
+    if (!mounted) return;
     setState(() {
       _selectedImage = File(picked.path);
     });
@@ -46,6 +47,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
       await EmployeeService.uploadProfileImage(picked.path);
       await _loadProfile(); // refresh profile data
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Failed to upload image')));
@@ -63,6 +65,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
 
       await _loadProfile(); // reload updated data
 
+      if (!mounted) return;
       setState(() {
         isEditing = false;
       });
@@ -71,6 +74,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
         const SnackBar(content: Text('Profile updated successfully')),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Failed to update profile')));
@@ -109,10 +113,20 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
           ? await EmployeeService.getEmployeeById(widget.userId!)
           : await EmployeeService.getMyProfile();
 
+      if (!mounted) return;
+
+      if (data == null) {
+        setState(() {
+          error = 'Profile not found';
+          isLoading = false;
+        });
+        return;
+      }
+
       setState(() {
         employee = data;
 
-        name = data!['fullName'] ?? '';
+        name = data['fullName'] ?? '';
         email = data['email'] ?? '';
         phone = data['phone'] ?? '';
         department = data['department'] ?? '';
@@ -125,6 +139,7 @@ class _EmployeeProfileScreenState extends State<EmployeeProfileScreen>
         isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         error = 'Failed to load profile';
         isLoading = false;

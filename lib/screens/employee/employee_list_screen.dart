@@ -56,9 +56,11 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
         filteredEmployees = employees;
       } else {
         filteredEmployees = employees.where((employee) {
+          if (employee == null) return false;
           final name = (employee['fullName'] ?? employee['name'] ?? '')
+              .toString()
               .toLowerCase();
-          final email = employee['email']?.toLowerCase() ?? '';
+          final email = (employee['email'] ?? '').toString().toLowerCase();
           return name.contains(search) || email.contains(search);
         }).toList();
       }
@@ -213,16 +215,22 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                         backgroundColor: Colors.white.withOpacity(0.1),
                       ),
                     )
-                        : ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: filteredEmployees.length,
-                      itemBuilder: (context, index) {
-                        final employee = filteredEmployees[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: _buildEmployeeCard(employee),
-                        );
-                      },
+                        : RefreshIndicator(
+                      onRefresh: fetchEmployees,
+                      color: const Color(0xFF3B82F6),
+                      backgroundColor: const Color(0xFF1E293B),
+                      child: ListView.builder(
+                        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                        itemCount: filteredEmployees.length,
+                        itemBuilder: (context, index) {
+                          final employee = filteredEmployees[index];
+                          if (employee == null) return const SizedBox.shrink();
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _buildEmployeeCard(Map<String, dynamic>.from(employee)),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],

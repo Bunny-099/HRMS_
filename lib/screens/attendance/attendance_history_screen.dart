@@ -259,13 +259,18 @@ class _AttendanceHistoryScreenState extends State<AttendanceHistoryScreen> {
 
                   // 🟢 History list (Glassmorphic Rows)
                   Expanded(
-                    child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: attendanceRecords.length,
-                      itemBuilder: (context, index) {
-                        final AttendanceRecord record = attendanceRecords[index];
-                        return _buildAttendanceRecord(record);
-                      },
+                    child: RefreshIndicator(
+                      onRefresh: _fetchAttendance,
+                      color: const Color(0xFF3B82F6),
+                      backgroundColor: const Color(0xFF1E293B),
+                      child: ListView.builder(
+                        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                        itemCount: attendanceRecords.length,
+                        itemBuilder: (context, index) {
+                          final AttendanceRecord record = attendanceRecords[index];
+                          return _buildAttendanceRecord(record);
+                        },
+                      ),
                     ),
                   ),
                 ],

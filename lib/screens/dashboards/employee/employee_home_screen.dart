@@ -4,6 +4,7 @@ import 'package:hrms/screens/attendance/mark_attendance_screen.dart';
 import 'package:hrms/screens/leave/my_leaves_screen.dart';
 import 'package:hrms/screens/payroll/monthly_payslip_screen.dart';
 import 'package:hrms/screens/employee/employee_profile_screen.dart';
+import 'package:hrms/screens/employee/employee_calendar_screen.dart';
 import 'package:hrms/services/employee_service.dart';
 
 class EmployeeHomeScreen extends StatefulWidget {
@@ -141,7 +142,8 @@ class _EmployeeHomeScreenState extends State<EmployeeHomeScreen> {
                     childAspectRatio: 1.1,
                     children: [
                       _buildFeatureCard(Icons.access_time_rounded, 'Attendance', const Color(0xFF3B82F6), () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MarkAttendanceScreen()))),
-                      _buildFeatureCard(Icons.event_note_rounded, 'My Leaves', const Color(0xFFF59E0B), () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyLeavesScreen()))),
+                      _buildFeatureCard(Icons.calendar_month_rounded, 'Calendar', const Color(0xFFF59E0B), () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EmployeeCalendarScreen()))),
+                      _buildFeatureCard(Icons.event_note_rounded, 'My Leaves', const Color(0xFFEF4444), () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyLeavesScreen()))),
                       _buildFeatureCard(Icons.receipt_long_rounded, 'Payslips', const Color(0xFF10B981), () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MonthlyPayslipScreen()))),
                       _buildFeatureCard(Icons.person_outline_rounded, 'Profile', const Color(0xFF8B5CF6), () async { await Navigator.push(context, MaterialPageRoute(builder: (_) => const EmployeeProfileScreen())); _loadEmployeeProfile(); }),
                     ],
